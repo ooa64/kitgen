@@ -1,7 +1,7 @@
 proc tclInit {} {
     rename tclInit {}
 
-    global auto_path tcl_library tcl_libPath tcl_version tclkit_system_encoding
+    global auto_path tcl_library tcl_libPath tcl_version tclkit_system_encoding env
 
     # find the file to mount.
     set noe $::tcl::kitpath
@@ -123,5 +123,9 @@ proc tclInit {} {
     uplevel #0 [list source [file join $tcl_library init.tcl]]
     
     # reset auto_path, so that init.tcl's search outside of tclkit is cancelled
-    set auto_path $tcl_libPath
+    if {[info exists env(TCLLIBPATH)]} {
+	set auto_path [concat $env(TCLLIBPATH) $tcl_libPath]
+    } else {
+        set auto_path $tcl_libPath
+    }
 }
