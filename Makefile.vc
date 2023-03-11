@@ -107,6 +107,13 @@ PARTS = $(PARTS) zlib
 LIBS  = $(BUILD)\lib\zlib.lib $(LIBS) 
 !endif
 
+!if $V == 86
+PARTS   = vqtcl vfs thread
+KITOPTS = -T
+CFLAGS=$(CFLAGS) -DKIT_INCLUDES_THREADS=1
+LIBS = $(LIBS) $(BUILD)\tcl\thread2*.lib
+!endif
+
 !if $(SYMBOLS)
 X       = $(X:x=gx)
 OPTS    = $(OPTS),symbols
@@ -140,7 +147,9 @@ VCVER=0
 !if ![del /q vercl.i vercl.x >NUL]
 !endif
 !if $(VCVERSION) >= 1500
-VCVER=9
+# VCVER=9
+# to match current mk makefile
+VCVER=8 
 !elseif $(VCVERSION) >= 1400
 VCVER=8
 !elseif $(VCVERSION) >= 1300
@@ -152,6 +161,14 @@ VCVER=6
 !if $(VCVERSION) >= 1400
 _VC_MANIFEST_EMBED_EXE=if exist $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;1
 _VC_MANIFEST_EMBED_DLL=if exist $@.manifest mt -nologo -manifest $@.manifest -outputresource:$@;2
+!endif
+
+!ifndef MACHINE
+!if "$(VSCMD_ARG_TGT_ARCH)" == "x86"
+MACHINE         = IX86
+!elseif "$(VSCMD_ARG_TGT_ARCH)" == "x64"
+MACHINE         = AMD64
+!endif
 !endif
 
 !ifndef MACHINE
@@ -210,7 +227,7 @@ kit-cli.exe: setup tcl $(PARTS) files $(CLIOBJS)
 	  -c ../../kitInit.c -Fo$(BUILD)/kitInit.obj
 	@$(LINK) $(LDFLAGS) -subsystem:console -out:$@ $(CLIOBJS) \
 	  $(BUILD)\kitInit.obj \
-	  $(BUILD)\lib\vfs1.4\vfs1*.lib \
+	  $(BUILD)\lib\vfs1.4.2\vfs142*.lib \
 	  $(BUILD)\lib\vqtcl4.1\vqtcl4*.lib \
 	  $(BUILD)\lib\tcl$V*.lib \
 	  $(BUILD)\lib\tcldde1*.lib \
@@ -222,7 +239,7 @@ kit-gui.exe: setup tcl tk $(PARTS) files $(GUIOBJS)
 	  -c ../../kitInit.c -Fo$(BUILD)/kitInit.obj
 	@$(LINK) $(LDFLAGS) -subsystem:windows -out:$@ $(GUIOBJS) \
 	  $(BUILD)\kitInit.obj \
-	  $(BUILD)\lib\vfs1.4\vfs1*.lib \
+	  $(BUILD)\lib\vfs1.4.2\vfs142*.lib \
 	  $(BUILD)\lib\vqtcl4.1\vqtcl4*.lib \
 	  $(BUILD)\lib\tcl$V*.lib \
 	  $(BUILD)\lib\tk$V*.lib \
@@ -249,9 +266,9 @@ kitsh.exe: setup tcl mk itcl $(PARTS:vqtcl=) files $(CLIOBJS)
 	$(LINK) $(LDFLAGS) -subsystem:console -out:$@ $(CLIOBJS) \
 	  $(BUILD)\kitInit.obj \
 	  $(BUILD)\mk4tcl.obj $(BUILD)\mk4too.obj \
-	  $(BUILD)\lib\vfs1.4\vfs1*.lib \
+	  $(BUILD)\lib\vfs1.4.2\vfs142*.lib \
 	  $(BUILD)\lib\mk4vc*.lib \
-	  $(BUILD)\lib\itcl3.4\itcl3*.lib \
+          $(BUILD)\lib\itcl3.4\itcl3*.lib \
 	  $(BUILD)\lib\tcl$V*.lib \
 	  $(BUILD)\lib\tcldde1*.lib \
 	  $(BUILD)\lib\tclreg1*.lib $(LIBS)
@@ -264,9 +281,9 @@ kit.exe: setup tcl tk mk itcl $(PARTS:vqtcl=) files $(GUIOBJS)
 	@$(LINK) $(LDFLAGS) -subsystem:windows -out:$@ $(GUIOBJS) \
 	  $(BUILD)\kitInit.obj \
 	  $(BUILD)\mk4tcl.obj $(BUILD)\mk4too.obj \
-	  $(BUILD)\lib\vfs1.4\vfs1*.lib \
+	  $(BUILD)\lib\vfs1.4.2\vfs142*.lib \
 	  $(BUILD)\lib\mk4vc*.lib \
-	  $(BUILD)\lib\itcl3.4\itcl3*.lib \
+      $(BUILD)\lib\itcl3.4\itcl3*.lib \
 	  $(BUILD)\lib\tcl$V*.lib \
 	  $(BUILD)\lib\tk$V*.lib \
 	  $(BUILD)\lib\tcldde1*.lib \
@@ -298,28 +315,28 @@ $(BUILD)\lib\vqtcl4.1\vqtcl41$X.lib:
 
 threaddyn: $(BUILD)\lib\threaddyn\thread26.dll
 $(BUILD)\lib\threaddyn\thread26.dll:
-	pushd ..\..\8.x\thread\win\vc & $(MAKE) -f Makefile.vc \
+	pushd ..\..\8.x\thread\win & $(MAKE) -f Makefile.vc \
 	  INSTALLDIR=$(BUILD) OPTS=none TMP_DIR=$(BUILD)\threaddyn \
-	  OUT_DIR=$(BUILD)\threaddyn all install
+	  OUT_DIR=$(BUILD)\threaddyn default-target default-install
 
 thread: $(BUILD)\lib\thread\thread26$(X:t=).lib
 $(BUILD)\lib\thread\thread26$(X:t=).lib:
-	pushd ..\..\8.x\thread\win\vc & $(MAKE) -f Makefile.vc \
+	pushd ..\..\8.x\thread\win & $(MAKE) -f Makefile.vc \
 	  INSTALLDIR=$(BUILD) OPTS=$(OPTS) TMP_DIR=$(BUILD)\thread \
-	  OUT_DIR=$(BUILD)\thread all install
+	  OUT_DIR=$(BUILD)\thread default-target default-install
 
-vfs: $(BUILD)\lib\vfs1.4\vfs14$(X:t=).lib
+vfs: $(BUILD)\lib\vfs1.4.2\vfs142$(X:t=).lib
 $(BUILD)\vfs.obj:
 	$(CC) $(CFLAGS) -DSTATIC_BUILD -I..\tcl\generic -I..\tcl\win \
 	  -I..\..\8.x\tclvfs\generic -c ..\..\8.x\tclvfs\generic\vfs.c \
 	  -Fo$(BUILD)\vfs.obj
-	$(CPY) ..\..\8.x\tclvfs\library $(BUILD)\lib\vfs1.4^\
+	$(CPY) ..\..\8.x\tclvfs\library $(BUILD)\lib\vfs1.4.2^\
 
-$(BUILD)\lib\vfs1.4\vfs14$(X:t=).lib:
+$(BUILD)\lib\vfs1.4.2\vfs142$(X:t=).lib:
 	pushd ..\..\8.x\tclvfs\win & $(MAKE) -f Makefile.vc \
 	  INSTALLDIR=$(BUILD) TCLDIR=$(BUILD)\..\..\tcl \
 	  OPTS=$(OPTS) TMP_DIR=$(BUILD)\vfs \
-	  OUT_DIR=$(BUILD)\vfs all install-binaries install-libraries
+	  OUT_DIR=$(BUILD)\vfs all install-binaries install-libraries default-install-scripts
 
 zlib: $(BUILD)\lib\zlib.lib
 $(BUILD)\lib\zlib.lib:
@@ -328,10 +345,10 @@ $(BUILD)\lib\zlib.lib:
 
 itcl: $(BUILD)\itcl\itcl34$(X:t=).lib
 $(BUILD)\itcl\itcl34$(X:t=).lib:
-	pushd ..\..\8.x\itcl\win & $(MAKE) -f Makefile.vc \
+	pushd ..\..\8.x\itcl\win & $(MAKE) -f Makefile.vc MACHINE=$(MACHINE) \
 	  INSTALLDIR=$(BUILD) TCLDIR=$(BUILD)\..\..\tcl \
 	  OPTS=$(OPTS) TMP_DIR=$(BUILD)\itcl \
-	  OUT_DIR=$(BUILD)\itcl all install-binaries install-libraries
+	  OUT_DIR=$(BUILD)\itcl all install
 
 mk: $(BUILD)\lib\mk4vc$(VCVER)0$(X:t=).lib
 $(BUILD)\lib\mk4vc$(VCVER)0$(X:t=).lib:
@@ -375,7 +392,8 @@ $(BUILD)\tclkit.res: ..\..\tclkit.rc
 .PHONY: setup files tidy clean
 
 files:
-	@$(CPY) ..\..\files $(BUILD)\files^\
+	xcopy /i /y >NUL ..\..\files $(BUILD)\files^\
+#	@$(CPY) ..\..\files $(BUILD)\files^\
 
 setup:
 	@if not exist $(BUILD) mkdir $(BUILD)

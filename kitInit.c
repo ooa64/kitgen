@@ -55,7 +55,7 @@ Tcl_AppInitProc	Vlerq_Init, Vlerq_SafeInit;
 #else
 Tcl_AppInitProc	Mk4tcl_Init;
 #endif
-#ifdef TCL_THREADS
+#ifdef KIT_INCLUDES_THREADS
 Tcl_AppInitProc	Thread_Init;
 #endif
 #if KIT_INCLUDES_ZLIB
@@ -178,8 +178,8 @@ TclKit_AppInit(Tcl_Interp *interp)
 #if KIT_INCLUDES_ZLIB
     Tcl_StaticPackage(0, "zlib", Zlib_Init, NULL);
 #endif
-#ifdef TCL_THREADS
-    Tcl_StaticPackage(0, "Thread", Thread_Init, Thread_SafeInit);
+#ifdef KIT_INCLUDES_THREADS
+    Tcl_StaticPackage(0, "Thread", Thread_Init, NULL);
 #endif
 #ifdef _WIN32
 #if 10 * TCL_MAJOR_VERSION + TCL_MINOR_VERSION > 84

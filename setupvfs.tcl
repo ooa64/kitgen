@@ -242,8 +242,8 @@ if {$encOpt} {
 
 switch -exact -- $threadOpt {
   static {
-    foreach file [glob -tails -dir build/lib/thread2.6.5 *.tcl] {
-      lappend clifiles lib/Thread/$file
+    foreach file [glob -tails -dir build/lib/thread2.8.8 *.tcl] {
+      lappend clifiles lib/thread2.8.8/$file
     }
   }
   dynamic {
@@ -442,7 +442,7 @@ switch [info sharedlibext] {
 set exts {rechan}
 if {![package vsatisfies [package provide Tcl] 8.6]} { lappend exts zlib }
 if {[package vcompare [package provide Tcl] 8.4] == 0} { lappend exts pwb }
-if {$threadOpt eq "static"} { lappend exts Thread }
+#if {$threadOpt eq "static"} { lappend exts Thread }
 foreach ext $exts {
     staticpkg $ext
 }
@@ -451,7 +451,8 @@ if {[lsearch [info loaded] {{} Itcl}] != -1} {
     catch {load {} Itcl}
     lappend versmap itcl3@ itcl[package provide Itcl]
     lappend clifiles lib/itcl3@/itcl.tcl
-    staticpkg Itcl [package provide Itcl]
+    lappend clifiles lib/itcl3@/pkgIndex.tcl
+#   staticpkg Itcl [package provide Itcl]
 }
 
 if {[package vcompare [package provide Tcl] 8.4] == 0} {
