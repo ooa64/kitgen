@@ -17,29 +17,29 @@
 # is a simple wrapper for the popular Gdbm library.
 # Uncomment the following line if you like to compile the
 # Gdbm wrapper for persistent shared variables.
-# 
+#
 # ../configure --enable-threads --with-gdbm
 #
 # If your Gdbm library is not installed in one of the
 # default system locations (/usr/lib, /usr/local/lib ...)
 # please use following directive. Note that both library
-# file *and* includes should be located in "/my/gdbm". 
+# file *and* includes should be located in "/my/gdbm".
 # Of course, you have to replace the "/my/gdbm" below
 # with the exact location, as found in your system:
-# 
+#
 # ../configure --enable-threads --with-gdbm=/my/gdbm
 #
 #
 # AOLserver 4.X; Uses public Tcl library.
 # ----------------------------------------------------
-# aoldir="/usr/local/aolserver"
+# nsdir="/usr/local/naviserver"
 # ../configure --enable-threads \
-#   --with-aolserver=$aoldir \
-#   --prefix=$aoldir --exec-prefix=$aoldir
+#   --with-naviserver=$nsdir \
+#   --prefix=$nsdir --exec-prefix=$nsdir
 #
-# AOLserver uses its own package loading mechanism.
+# NaviServer/AOLserver uses its own package loading mechanism.
 # To load, just do "ns_eval package require Thread"
-# at the AOLserver startup or later from any thread.
+# at the NaviServer/AOLserver startup or later from any thread.
 #
 #
 # Mac OS X; Uses public Tcl library.

@@ -10,21 +10,17 @@
 #
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
-#
-# RCS: @(#) $Id: thread.test,v 1.23 2009/05/03 23:57:26 ferrieux Exp $
 
-package require tcltest; namespace import -force ::tcltest::*
-
-# Require the accurate version for the tests so we don't pick up
-# older Thread packages by accident
-package require Tcl 8.4
-package require Thread 2.6
+package require tcltest
+namespace import ::tcltest::*
+tcltest::loadTestedCommands
+package require Thread
 
 tcltest::testConstraint chanTransfer               \
     [expr {   $::tcl_platform(platform) == "unix"  \
            || $::tcl_patchLevel > "8.4.10"}]
 
-set dummy [::tcltest::makeFile dummyForTransfer dummyForTransfer]
+set dummy [makeFile dummyForTransfer dummyForTransfer]
 set tcltest::mainThread [thread::id]
 
 proc ThreadReap {} {
@@ -42,9 +38,9 @@ test thread-2.0 {no global thread command} {
     info commands thread
 } {}
 
-test thread-2.84 {thread subcommands} {
+test thread-2.84 {thread subcommands} -body {
     lsort [info commands thread::*]
-} {::thread::attach ::thread::broadcast ::thread::cond ::thread::configure ::thread::create ::thread::detach ::thread::errorproc ::thread::eval ::thread::exists ::thread::exit ::thread::id ::thread::join ::thread::mutex ::thread::names ::thread::preserve ::thread::release ::thread::rwmutex ::thread::send ::thread::transfer ::thread::unwind ::thread::wait}
+} -match glob -result {::thread::attach ::thread::broadcast *::thread::cond ::thread::configure ::thread::create ::thread::detach ::thread::errorproc ::thread::eval ::thread::exists ::thread::exit ::thread::id ::thread::join ::thread::mutex ::thread::names ::thread::preserve ::thread::release ::thread::rwmutex ::thread::send ::thread::transfer ::thread::unwind ::thread::wait}
 
 test thread-3.0 {thread::names initial thread list} {
     list [ThreadReap] [llength [thread::names]]
@@ -149,6 +145,26 @@ test thread-7.0 {thread::exit} {
     set c
 } {666}
 
+test thread-7.1 {thread::exit - # args} {
+    set tid [thread::create]
+    catch {thread::send $tid {thread::exit 1 0}} msg
+    set msg
+} {wrong # args: should be "thread::exit ?status?"}
+
+test thread-7.2 {thread::exit - args} {
+    set tid [thread::create]
+    catch {thread::send $tid {thread::exit foo}} msg
+    set msg
+} {expected integer but got "foo"}
+
+test thread-7.3 {thread::exit - status} {
+    ThreadReap
+    set tid [thread::create -joinable {thread::exit 0}]
+    set c [thread::join $tid]
+    ThreadReap
+    set c
+} {0}
+
 test thread-8.0 {thread::exists - true} {
     ThreadReap
     set c [thread::exists [thread::create]]
@@ -235,12 +251,29 @@ test thread-11.6 {thread::send - asynchronous send} {
 
 test thread-11.7 {thread::send - async send with event-loop wait} {
     ThreadReap
+    set res {}
     set tid [thread::create]
     thread::send -async $tid {set x 5} five
     vwait five
+    lappend res $five; set five {}
+    thread::send -async $tid {set x 5} [binary format cccc 0x66 0x69 0x76 0x65]; # five as byte array without str-rep.
+    vwait five
+    lappend res $five; set five {}
     ThreadReap
-    set five
-} {5}
+    set res
+} {5 5}
+
+test thread-11.7.1 {thread::send - sync send with var} {
+    ThreadReap
+    set res {}
+    set tid [thread::create]
+    thread::send $tid {set x 5} five
+    lappend res $five; set five {}
+    thread::send $tid {set x 5} [binary format cccc 0x66 0x69 0x76 0x65]; # five as byte array without str-rep.
+    lappend res $five; set five {}
+    ThreadReap
+    set res
+} {5 5}
 
 test thread-11.8 {thread::send - send to self directly} {
     thread::send [thread::id] {set x 5} five
@@ -273,6 +306,30 @@ test thread-11.11 {Thread_Send preserve errorCode} {
     ThreadReap
     list $c $msg $errorCode
 } {1 ERR CODE}
+
+test thread-11.12 {thread::send - self as target, queue order (bug [b5709ea906])} -body {
+    # Short circuit sending to itself should consider order of already dispatched events,
+    # so SYNC is expected after ASYNC (and possibly TMR-0) but definitely before IDLE, only
+    # the HEAD event (synchronously sends to head of queue) is expected as first in the result,
+    # (note the timer-generation may be retarded tcl-versions related, so TMR-0 can be delayed)
+    ThreadReap
+    set res {}
+    set e [after 500 {lappend res TIMEOUT}]
+    #
+    after 0                                {lappend res TMR-0}
+    after idle                             {lappend res IDLE}
+    thread::send -async       [thread::id] {lappend res ASYNC}
+    thread::send -async -head [thread::id] {lappend res AHEAD}
+    thread::send        -head [thread::id] {lappend res HEAD}
+    thread::send              [thread::id] {lappend res SYNC}
+    #
+    while {[llength $res] < 6 && "TIMEOUT" ni $res} {
+	vwait res
+    }
+    after cancel $e
+    ThreadReap
+    set res
+} -match regexp -result {^HEAD(?:(?: TMR-0| AHEAD ASYNC){2} SYNC| AHEAD ASYNC SYNC TMR-0) IDLE$}
 
 test thread-12.0 {thread::wait} {
     ThreadReap
@@ -474,7 +531,7 @@ test thread-17.2 {thread::transfer - target thread dying} {chanTransfer} {
 
 test thread-17.3 {thread::transfer - clearing of fileevents} {chanTransfer} {
     proc _HandleIt_ {} {
-        global gotEvents tid file    
+        global gotEvents tid file
         if {$gotEvents == 0} {
             thread::transfer $tid $file
             # From now on no events should be delivered anymore,
@@ -522,7 +579,7 @@ test thread-17.6 {thread::transfer - socket - readable?} {chanTransfer} {
     set listener [socket -server accept 0]
     set port [lindex [fconfigure $listener -sockname] 2]
     set socket [socket localhost $port]
-    update ;# To run accept.
+    vwait lsock
 
     thread::transfer $tid $socket
 
@@ -546,7 +603,7 @@ test thread-17.7 {thread::transfer - socket - closeable?} {chanTransfer} {
     set listener [socket -server accept 0]
     set port [lindex [fconfigure $listener -sockname] 2]
     set socket [socket localhost $port]
-    update ;# To run accept.
+    vwait lsock
 
     thread::transfer $tid $socket
 
@@ -996,8 +1053,8 @@ test thread-20.14 {thread::mutex - write-lock write-locked mutex} {
 test thread-20.15 {thread::mutex - read-lock write-locked mutex} {
     set rwmutex [thread::rwmutex create]
     thread::rwmutex wlock $rwmutex
-    set x [catch {thread::rwmutex rlock $rwmutex} msg]  
-    thread::rwmutex unlock $rwmutex 
+    set x [catch {thread::rwmutex rlock $rwmutex} msg]
+    thread::rwmutex unlock $rwmutex
     thread::rwmutex destroy $rwmutex
     list $x $msg
 } {1 {read-locking already write-locked mutex from the same thread}}
@@ -1162,4 +1219,5 @@ test thread-21.16 {thread::cond - delete waited variable} {
     list $c1 $c2 $r1 $r2
 } {1 0 {condition variable is in use} {}}
 
+removeFile dummyForTransfer
 ::tcltest::cleanupTests

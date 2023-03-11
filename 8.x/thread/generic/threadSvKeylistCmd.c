@@ -1,4 +1,4 @@
-/* 
+/*
  * threadSvKeylist.c --
  *
  * This file implements keyed-list commands as part of the thread
@@ -10,24 +10,12 @@
  *
  * See the file "license.txt" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
- *
- * Rcsid: @(#)$Id: threadSvKeylistCmd.c,v 1.3 2009/07/22 11:25:34 nijtmans Exp $
  * ---------------------------------------------------------------------------
  */
 
 #include "threadSvCmd.h"
+#include "threadSvKeylistCmd.h"
 #include "tclXkeylist.h"
-
-/*
- * This is defined in keylist.c. We need it here
- * to be able to plug-in our custom keyed-list
- * object duplicator which produces proper deep
- * copies of the keyed-list objects. The standard
- * one produces shallow copies which are not good
- * for usage in the thread shared variables code.
- */
-
-extern Tcl_ObjType keyedListType;
 
 /*
  * Wrapped keyed-list commands
@@ -69,10 +57,10 @@ Sv_RegisterKeylistCommands(void)
     if (initialized == 0) {
         Tcl_MutexLock(&initMutex);
         if (initialized == 0) {
-            Sv_RegisterCommand("keylset",  SvKeylsetObjCmd,  NULL, NULL);
-            Sv_RegisterCommand("keylget",  SvKeylgetObjCmd,  NULL, NULL);
-            Sv_RegisterCommand("keyldel",  SvKeyldelObjCmd,  NULL, NULL);
-            Sv_RegisterCommand("keylkeys", SvKeylkeysObjCmd, NULL, NULL);
+            Sv_RegisterCommand("keylset",  SvKeylsetObjCmd,  NULL, 0);
+            Sv_RegisterCommand("keylget",  SvKeylgetObjCmd,  NULL, 0);
+            Sv_RegisterCommand("keyldel",  SvKeyldelObjCmd,  NULL, 0);
+            Sv_RegisterCommand("keylkeys", SvKeylkeysObjCmd, NULL, 0);
             Sv_RegisterObjType(&keyedListType, DupKeyedListInternalRepShared);
             initialized = 1;
         }
@@ -98,19 +86,19 @@ Sv_RegisterKeylistCommands(void)
  */
 
 static int
-SvKeylsetObjCmd(arg, interp, objc, objv)
-    ClientData arg;                     /* Not used. */
-    Tcl_Interp *interp;                 /* Current interpreter. */
-    int objc;                           /* Number of arguments. */
-    Tcl_Obj *const objv[];              /* Argument objects. */
-{
+SvKeylsetObjCmd(
+    void *arg,                         /* Not used. */
+    Tcl_Interp *interp,                /* Current interpreter. */
+    int objc,                          /* Number of arguments. */
+    Tcl_Obj *const objv[]              /* Argument objects. */
+) {
     int i, off, ret, flg;
     char *key;
     Tcl_Obj *val;
     Container *svObj = (Container*)arg;
-    
+
     /*
-     * Syntax: 
+     * Syntax:
      *          sv::keylset array lkey key value ?key value ...?
      *          $keylist keylset key value ?key value ...?
      */
@@ -122,7 +110,7 @@ SvKeylsetObjCmd(arg, interp, objc, objv)
     }
     if ((objc - off) < 2 || ((objc - off) % 2)) {
         Tcl_WrongNumArgs(interp, off, objv, "key value ?key value ...?");
-        goto cmd_err;   
+        goto cmd_err;
     }
     for (i = off; i < objc; i += 2) {
         key = Tcl_GetString(objv[i]);
@@ -130,7 +118,7 @@ SvKeylsetObjCmd(arg, interp, objc, objv)
         ret = TclX_KeyedListSet(interp, svObj->tclObj, key, val);
         if (ret != TCL_OK) {
             goto cmd_err;
-        } 
+        }
     }
 
     return Sv_PutContainer(interp, svObj, SV_CHANGED);
@@ -157,19 +145,19 @@ SvKeylsetObjCmd(arg, interp, objc, objv)
  */
 
 static int
-SvKeylgetObjCmd(arg, interp, objc, objv)
-    ClientData arg;                     /* Not used. */
-    Tcl_Interp *interp;                 /* Current interpreter. */
-    int objc;                           /* Number of arguments. */
-    Tcl_Obj *const objv[];              /* Argument objects. */
-{
+SvKeylgetObjCmd(
+    void *arg,                         /* Not used. */
+    Tcl_Interp *interp,                /* Current interpreter. */
+    int objc,                          /* Number of arguments. */
+    Tcl_Obj *const objv[]              /* Argument objects. */
+) {
     int ret, flg, off;
     char *key;
     Tcl_Obj *varObjPtr = NULL, *valObjPtr = NULL;
     Container *svObj = (Container*)arg;
 
     /*
-     * Syntax: 
+     * Syntax:
      *          sv::keylget array lkey ?key? ?var?
      *          $keylist keylget ?key? ?var?
      */
@@ -181,7 +169,7 @@ SvKeylgetObjCmd(arg, interp, objc, objv)
     }
     if ((objc - off) > 2) {
         Tcl_WrongNumArgs(interp, off, objv, "?key? ?var?");
-        goto cmd_err;   
+        goto cmd_err;
     }
     if ((objc - off) == 0) {
         if (Sv_PutContainer(interp, svObj, SV_UNCHANGED) != TCL_OK) {
@@ -194,7 +182,7 @@ SvKeylgetObjCmd(arg, interp, objc, objv)
     } else {
         varObjPtr = NULL;
     }
-    
+
     key = Tcl_GetString(objv[off]);
     ret = TclX_KeyedListGet(interp, svObj->tclObj, key, &valObjPtr);
     if (ret == TCL_ERROR) {
@@ -203,8 +191,7 @@ SvKeylgetObjCmd(arg, interp, objc, objv)
 
     if (ret == TCL_BREAK) {
         if (varObjPtr) {
-            Tcl_ResetResult(interp);
-            Tcl_SetBooleanObj(Tcl_GetObjResult(interp), 0);
+            Tcl_SetObjResult(interp, Tcl_NewIntObj(0));
         } else {
             Tcl_AppendResult (interp, "key \"", key, "\" not found", NULL);
             goto cmd_err;
@@ -212,11 +199,9 @@ SvKeylgetObjCmd(arg, interp, objc, objv)
     } else {
         Tcl_Obj *resObjPtr = Sv_DuplicateObj(valObjPtr);
         if (varObjPtr) {
-            int len;
-            Tcl_ResetResult(interp);
-            Tcl_SetBooleanObj(Tcl_GetObjResult(interp), 1);
-            Tcl_GetStringFromObj(varObjPtr, &len);
-            if (len) {
+            Tcl_SetObjResult(interp, Tcl_NewIntObj(1));
+            Tcl_GetString(varObjPtr);
+            if (varObjPtr->length) {
                 Tcl_ObjSetVar2(interp, varObjPtr, NULL, resObjPtr, 0);
             }
         } else {
@@ -248,18 +233,18 @@ SvKeylgetObjCmd(arg, interp, objc, objv)
  */
 
 static int
-SvKeyldelObjCmd(arg, interp, objc, objv)
-    ClientData arg;                     /* Not used. */
-    Tcl_Interp *interp;                 /* Current interpreter. */
-    int objc;                           /* Number of arguments. */
-    Tcl_Obj *const objv[];              /* Argument objects. */
-{
+SvKeyldelObjCmd(
+    void *arg,                         /* Not used. */
+    Tcl_Interp *interp,                /* Current interpreter. */
+    int objc,                          /* Number of arguments. */
+    Tcl_Obj *const objv[]              /* Argument objects. */
+) {
     int i, off, ret;
     char *key;
     Container *svObj = (Container*)arg;
 
     /*
-     * Syntax: 
+     * Syntax:
      *          sv::keyldel array lkey key ?key ...?
      *          $keylist keyldel ?key ...?
      */
@@ -282,7 +267,7 @@ SvKeyldelObjCmd(arg, interp, objc, objv)
             goto cmd_err;
         }
     }
-    
+
     return Sv_PutContainer(interp, svObj, SV_CHANGED);
 
  cmd_err:
@@ -307,19 +292,19 @@ SvKeyldelObjCmd(arg, interp, objc, objv)
  */
 
 static int
-SvKeylkeysObjCmd(arg, interp, objc, objv)
-    ClientData arg;                     /* Not used. */
-    Tcl_Interp *interp;                 /* Current interpreter. */
-    int objc;                           /* Number of arguments. */
-    Tcl_Obj *const objv[];              /* Argument objects. */
-{
+SvKeylkeysObjCmd(
+    void *arg,                         /* Not used. */
+    Tcl_Interp *interp,                /* Current interpreter. */
+    int objc,                          /* Number of arguments. */
+    Tcl_Obj *const objv[]              /* Argument objects. */
+) {
     int ret, off;
     char *key = NULL;
     Tcl_Obj *listObj = NULL;
     Container *svObj = (Container*)arg;
 
     /*
-     * Syntax: 
+     * Syntax:
      *          sv::keylkeys array lkey ?key?
      *          $keylist keylkeys ?key?
      */
@@ -346,7 +331,7 @@ SvKeylkeysObjCmd(arg, interp, objc, objv)
     }
 
     Tcl_SetObjResult (interp, listObj); /* listObj allocated by API !*/
-    
+
     return Sv_PutContainer(interp, svObj, SV_UNCHANGED);
 
  cmd_err:

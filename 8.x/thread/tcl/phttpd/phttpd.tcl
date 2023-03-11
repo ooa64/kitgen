@@ -9,18 +9,18 @@
 #
 # Usage:
 #    phttpd::create port
-# 
+#
 #    port         Tcp port where the server listens
 #
 # Example:
 #
-#    # tclsh8.4
+#    # tclsh8.6
 #    % source phttpd.tcl
 #    % phttpd::create 5000
 #    % vwait forever
 #
 #    Starts the server on the port 5000. Also, look at the Httpd array
-#    definition in the "phttpd" namespace declaration to find out 
+#    definition in the "phttpd" namespace declaration to find out
 #    about other options you may put on the command line.
 #
 #    You can use: http://localhost:5000/monitor URL to test the
@@ -30,10 +30,7 @@
 #
 # See the file "license.terms" for information on usage and
 # redistribution of this file, and for a DISCLAIMER OF ALL WARRANTIES.
-#
 # -----------------------------------------------------------------------------
-# Rcsid: @(#)$Id: phttpd.tcl,v 1.5 2002/12/13 20:55:07 vasiljevic Exp $
-#
 
 package require Tcl    8.4
 package require Thread 2.5
@@ -142,7 +139,7 @@ proc phttpd::create {port args} {
     # the actual accept with a helper after/idle callback.
     # This is a workaround for a well-known Tcl bug.
     #
-    
+
     socket -server [namespace current]::_Accept $port
 }
 
@@ -204,7 +201,7 @@ proc phttpd::Accept {sock ipaddr port} {
 
     #
     # Send the work ticket to threadpool.
-    # 
+    #
 
     tpool::post -detached $Httpd(tpid) [list [namespace current]::Ticket $sock]
 }
@@ -225,15 +222,15 @@ proc phttpd::Accept {sock ipaddr port} {
 #
 
 proc phttpd::Ticket {sock} {
-    
+
     thread::attach $sock
     fileevent $sock readable [list [namespace current]::Read $sock]
-    
+
     #
     # End of processing is signalized here.
     # This will release the worker thread.
     #
-    
+
     vwait [namespace current]::done
 }
 
@@ -275,9 +272,9 @@ proc phttpd::Read {sock} {
                 return [Done]
             }
         }
-        
+
         # string compare $readCount 0 maps -1 to -1, 0 to 0, and > 0 to 1
-        
+
         set state [string compare $readCount 0],$data(state),$data(proto)
         switch -- $state {
             "0,mime,GET" - "0,query,POST" {
@@ -336,7 +333,7 @@ proc phttpd::Done {} {
     variable data
 
     close $data(sock)
-    
+
     if {[info exists data]} {
         unset data
     }
@@ -433,7 +430,7 @@ proc phttpd::ContentType {path} {
 
     set type "text/plain"
     catch {set type $MimeTypes([file extension $path])}
-    
+
     return $type
 }
 
@@ -620,7 +617,7 @@ proc phttpd::CgiMap {data} {
 #
 
 proc phttpd::QueryMap {query} {
-    
+
     set res [list]
 
     regsub -all {[&=]} $query { }    query

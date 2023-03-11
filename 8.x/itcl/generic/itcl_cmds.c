@@ -53,9 +53,6 @@ namespace eval ::itcl {\n\
         if {[info exists library]} {\n\
             lappend dirs $library\n\
         } else {\n\
-            if {[catch {uplevel #0 source -rsrc itcl}] == 0} {\n\
-                return\n\
-            }\n\
             set dirs {}\n\
             if {[info exists env(ITCL_LIBRARY)]} {\n\
                 lappend dirs $env(ITCL_LIBRARY)\n\
@@ -866,7 +863,7 @@ Itcl_ProtectionCmd(clientData, interp, objc, objv)
     int objc;                /* number of arguments */
     Tcl_Obj *CONST objv[];   /* argument objects */
 {
-    int pLevel = (int)clientData;
+    int pLevel = (int)(size_t)clientData;
 
     int result;
     int oldLevel;
@@ -1145,7 +1142,7 @@ Itcl_ScopeCmd(dummy, interp, objc, objv)
         if (!entry) {
             Tcl_AppendResult(interp,
                 "can't scope variable \"", token,
-                "\": missing object context\"",
+                "\": missing object context",
                 (char*)NULL);
             result = TCL_ERROR;
             goto scopeCmdDone;
@@ -1614,6 +1611,7 @@ Itcl_IsObjectCmd(clientData, interp, objc, objv)
      *    Need the NULL test, or the test will fail if cmd is NULL
      */
     if (cmd == NULL || ! Itcl_IsObject(cmd)) {
+	ckfree(cmdName);
         Tcl_SetObjResult(interp, Tcl_NewBooleanObj(0));
         return TCL_OK;
     }
@@ -1627,6 +1625,7 @@ Itcl_IsObjectCmd(clientData, interp, objc, objv)
 
         if (! Itcl_ObjectIsa(contextObj, classDefn)) {
 
+	    ckfree(cmdName);
             Tcl_SetObjResult(interp, Tcl_NewBooleanObj(0));
             return TCL_OK;
         }

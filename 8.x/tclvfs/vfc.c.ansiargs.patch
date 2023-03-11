@@ -1,0 +1,19 @@
+Index: generic/vfs.c
+==================================================================
+--- generic/vfs.c
++++ generic/vfs.c
+@@ -50,10 +50,13 @@
+ #define TCLVFS_POSIXERROR (-1)
+ 
+ #ifndef CONST86
+ #define CONST86
+ #endif
++#ifndef _ANSI_ARGS_
++#define _ANSI_ARGS_(x) ()
++#endif
+ 
+ /*
+  * Only the _Init function is exported.
+  */
+ 
+

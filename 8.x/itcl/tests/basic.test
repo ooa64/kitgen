@@ -129,6 +129,16 @@ test basic-1.19 {classes can be unicode} {
 test basic-1.20 {classes can be unicode} {
     \u6210bcd0 foo
 } bar
+test basic-1.21 {Bug 2e0e27de5f} -setup {
+    itcl::class Object {
+	public variable n {}
+	constructor {} {set n test} {}
+    }
+} -body {
+    Object foo
+} -cleanup {
+    itcl::delete class Object
+} -result foo
 
 # ----------------------------------------------------------------------
 #  #auto names
@@ -398,6 +408,21 @@ test basic-6.7 {common variables can be unset} {
 test basic-6.8 {common variables can be redefined} {
     test_arrays0 do set undefined "scalar"
 } {scalar}
+
+test basic-7.0 {SF Bug 230} -setup {
+    itcl::class Dog {
+	method bark {}
+    }
+    itcl::body Dog::bark {} {
+	variable bite
+	set bite ouch
+    }
+} -body {
+    Dog fido
+    fido bark
+} -cleanup {
+    itcl::delete class Dog
+} -result ouch
 
 ::tcltest::cleanupTests
 return
