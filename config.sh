@@ -71,6 +71,7 @@ case $cli-$dyn-$gui in 0-0-0) cli=1 dyn=1 gui=1 ;; esac
       echo "CC         = ${CC:=gcc}"
       echo "CXX        = ${CXX:=gcc}"
       echo "LDFLAGS    = -ldl -lm"
+      echo 'LDFLAGS   += build/lib/*tclstub8*.a'
       echo "LDXXFLAGS  = -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic"
       echo "GUI_OPTS   = -L/usr/X11R6/lib -lX11 -lXss"
       if [ $root != "8.4" ]; then
@@ -155,8 +156,10 @@ case $cli-$dyn-$gui in 0-0-0) cli=1 dyn=1 gui=1 ;; esac
     1) case $mach in Linux|SunOS|*BSD)
           echo "LDFLAGS   += -lpthread" ;;
        esac
+       echo "CFLAGS    += -DKIT_INCLUDES_THREADS"
+       echo 'LDFLAGS   += build/lib/thread2*/*thread2*.a'
        echo "TCL_OPTS   = --enable-threads"
-       echo "KIT_OPTS   = -t$kitopts" ;;
+       echo "KIT_OPTS   = -T$kitopts" ;;
     0) echo "KIT_OPTS   =$kitopts" ;;
   esac
 
@@ -179,6 +182,7 @@ case $cli-$dyn-$gui in 0-0-0) cli=1 dyn=1 gui=1 ;; esac
     echo
     echo "TCL_OPTS       += --enable-symbols"
     echo "THREADDYN_OPTS += --enable-symbols"
+    echo "THREAD_OPTS    += --enable-symbols"
     echo "TK_OPTS        += --enable-symbols"
     echo "TKDYN_OPTS     += --enable-symbols"
     echo "VFS_OPTS       += --enable-symbols"
@@ -187,6 +191,11 @@ case $cli-$dyn-$gui in 0-0-0) cli=1 dyn=1 gui=1 ;; esac
     echo "ITCL_OPTS      += --enable-symbols"
     echo ;;
   esac
+
+  if [ $root=="8.6" ]
+  then
+    echo "TCL_PRIV  += install-tzdata install-msgs"
+  fi
 
   case $cli in 1) targets="$targets tclkit-cli" ;; esac
   case $dyn in 1) targets="$targets tclkit-dyn" ;; esac
@@ -199,7 +208,7 @@ case $cli-$dyn-$gui in 0-0-0) cli=1 dyn=1 gui=1 ;; esac
   esac
 
   case $thread in
-    1) echo "all: threaded$targets" ;;
+    1) echo "all: thread$targets" ;;
     0) echo "all:$targets" ;;
   esac
 

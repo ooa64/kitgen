@@ -245,6 +245,7 @@ switch -exact -- $threadOpt {
     foreach file [glob -tails -dir build/lib/thread2.8.8 *.tcl] {
       lappend clifiles lib/thread2.8.8/$file
     }
+    lappend clifiles lib/thread2.8.8/pkgIndex.tcl
   }
   dynamic {
     lappend clifiles lib/[glob -tails -dir build/lib thread2*]
