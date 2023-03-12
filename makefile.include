@@ -60,7 +60,7 @@ build/tcl:
 	mkdir -p $@ && cd $@ && CFLAGS="$(CFLAGS)" && export CFLAGS && \
 	  sh ../../../tcl/$(PLAT)/configure $(STATIC) $(TCL_OPTS) \
 	    --prefix=$(OUTDIR) --exec-prefix=$(OUTDIR) && \
-	  $(MAKE) install-binaries install-libraries $(PRIV)
+	  $(MAKE) install-binaries install-libraries $(TCL_PRIV) $(PRIV)
 
 threaded: build/threaddyn
 build/threaddyn: build/tcl
