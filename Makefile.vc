@@ -111,7 +111,7 @@ LIBS  = $(BUILD)\lib\zlib.lib $(LIBS)
 PARTS   = vqtcl vfs thread
 KITOPTS = -T
 CFLAGS=$(CFLAGS) -DKIT_INCLUDES_THREADS=1
-LIBS = $(LIBS) $(BUILD)\tcl\thread2*.lib
+LIBS = $(LIBS) $(BUILD)\lib\thread2.8.8\thread288*.lib
 !endif
 
 !if $(SYMBOLS)
