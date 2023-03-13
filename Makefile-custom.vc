@@ -1,0 +1,14 @@
+!ifndef YAJLROOT
+YAYLROOT=\yajl-2.1.1
+!endif
+
+custom: yajl-tcl
+
+yajl-tcl: $(BUILD)\lib\yajltcl1.7.0\yajltcl170$X.lib
+$(BUILD)\lib\yajltcl1.7.0\yajltcl170$X.lib:
+	-md $(BUILD)\yajl-tcl
+	pushd ..\..\8.x\yajl-tcl\win & $(MAKE) -f Makefile.vc \
+	  INSTALLDIR=$(BUILD) OPTS=$(OPTS) TMP_DIR=$(BUILD)\yajl-tcl \
+	  OUT_DIR=$(BUILD)\yajl-tcl release install
+
+LIBS = $(LIBS) $(BUILD)\lib\yajltcl1.7.0\yajltcl170*.lib $(YAJLROOT)\lib\yajl_s.lib

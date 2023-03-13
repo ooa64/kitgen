@@ -61,6 +61,10 @@ UPX=0
 UPXLEVEL=1
 !endif
 
+!ifndef CUSTOM
+CUSTOM=0
+!endif
+
 MAKE    = $(MAKE) -nologo
 CPY     = xcopy /i /y >NUL
 COPY    = copy /y >NUL
@@ -131,6 +135,12 @@ UPXCOMP = upx -q --ultra-brute --compress-resources=0 $@
 UPXCOMP = upx -q9 $@ >NUL
 !endif
 !endif
+!endif
+
+!if $(CUSTOM)
+PARTS = $(PARTS) custom
+KITOPTS = $(KITOPTS) -c ..\..\setupvfs-custom.tcl 
+CFLAGS=$(CFLAGS) -DKIT_INCLUDES_CUSTOM=1
 !endif
 
 #-------------------------------------------------------------------------
@@ -210,6 +220,10 @@ tclkit-cli: tclkit-cli.exe
 tclkit-gui: tclkit-gui.exe
 tclkitsh:   tclkitsh.exe
 tclkit:     tclkit.exe
+
+!if $(CUSTOM)
+!include Makefile-custom.vc
+!endif
 
 tclkit-cli.exe: kit-cli.exe tidy
 	@$(COPY) kit-cli.exe $@

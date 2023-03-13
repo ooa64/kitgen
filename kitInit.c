@@ -194,6 +194,9 @@ TclKit_AppInit(Tcl_Interp *interp)
 #endif
 
     /* insert custom packages here */
+#ifdef KIT_INCLUDES_CUSTOM
+#include "kitInit-custom.c"
+#endif
 
     /* the tcl_rcFileName variable only exists in the initial interpreter */
 #ifdef _WIN32
