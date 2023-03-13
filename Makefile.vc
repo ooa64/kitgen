@@ -307,8 +307,8 @@ $(BUILD)\lib\tk$V$X.lib:
 	  core $(BUILD)\tk\wish.res install-libraries
 	$(COPY) $(BUILD)\tk\tk$V$X.lib $(BUILD)\lib
 
-vqtcl: $(BUILD)\lib\vqtcl4.1\vqtcl41$X.lib
-$(BUILD)\lib\vqtcl4.1\vqtcl41$X.lib:
+vqtcl: $(BUILD)\lib\vqtcl4.1\vqtcl41$(X:t=).lib
+$(BUILD)\lib\vqtcl4.1\vqtcl41$(X:t=).lib:
 	pushd ..\..\8.x\vqtcl\win & $(MAKE) -f Makefile.vc \
 	  INSTALLDIR=$(BUILD) OPTS=$(OPTS) TMP_DIR=$(BUILD)\vqtcl \
 	  OUT_DIR=$(BUILD)\vqtcl all install
@@ -319,20 +319,20 @@ $(BUILD)\lib\threaddyn\thread26.dll:
 	  INSTALLDIR=$(BUILD) OPTS=none TMP_DIR=$(BUILD)\threaddyn \
 	  OUT_DIR=$(BUILD)\threaddyn default-target default-install
 
-thread: $(BUILD)\lib\thread\thread26$(X:t=).lib
-$(BUILD)\lib\thread\thread26$(X:t=).lib:
+thread: $(BUILD)\lib\thread2.8.8\thread288$X.lib
+$(BUILD)\lib\thread2.8.8\thread288$X.lib:
 	pushd ..\..\8.x\thread\win & $(MAKE) -f Makefile.vc \
 	  INSTALLDIR=$(BUILD) OPTS=$(OPTS) TMP_DIR=$(BUILD)\thread \
 	  OUT_DIR=$(BUILD)\thread default-target default-install
 
-vfs: $(BUILD)\lib\vfs1.4.2\vfs142$(X:t=).lib
+vfs: $(BUILD)\lib\vfs1.4.2\vfs142$X.lib
 $(BUILD)\vfs.obj:
 	$(CC) $(CFLAGS) -DSTATIC_BUILD -I..\tcl\generic -I..\tcl\win \
 	  -I..\..\8.x\tclvfs\generic -c ..\..\8.x\tclvfs\generic\vfs.c \
 	  -Fo$(BUILD)\vfs.obj
 	$(CPY) ..\..\8.x\tclvfs\library $(BUILD)\lib\vfs1.4.2^\
 
-$(BUILD)\lib\vfs1.4.2\vfs142$(X:t=).lib:
+$(BUILD)\lib\vfs1.4.2\vfs142$X.lib:
 	pushd ..\..\8.x\tclvfs\win & $(MAKE) -f Makefile.vc \
 	  INSTALLDIR=$(BUILD) TCLDIR=$(BUILD)\..\..\tcl \
 	  OPTS=$(OPTS) TMP_DIR=$(BUILD)\vfs \
