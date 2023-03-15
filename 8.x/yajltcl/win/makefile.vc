@@ -1,0 +1,51 @@
+#------------------------------------------------------------- -*- makefile -*-
+#
+# Makefile for building Tcl extensions.
+#
+# Basic build, test and install
+#   set YAJLROOT=<yajlrelease>
+#   nmake /f makefile.vc INSTALLDIR=c:\path\to\tcl
+#   nmake /f makefile.vc INSTALLDIR=c:\path\to\tcl test
+#   nmake /f makefile.vc INSTALLDIR=c:\path\to\tcl install
+#
+# For other build options (debug, static etc.),
+# See TIP 477 (https://core.tcl-lang.org/tips/doc/main/tip/477.md) for
+# detailed documentation.
+#
+# See the file "license.terms" for information on usage and redistribution
+# of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+#
+#------------------------------------------------------------------------------
+
+PROJECT = yajltcl
+
+!include "rules-ext.vc"
+
+PRJ_OBJS = $(TMP_DIR)\yajltcl.obj $(TMP_DIR)\tclyajltcl.obj $(TMP_DIR)\yajltcllex.obj
+PRJ_INCLUDES =  -I$(YAJLROOT)\include
+PRJ_LIBS = /LIBPATH:$(YAJLROOT)\lib yajl_s.lib
+
+!include "$(_RULESDIR)\targets.vc"
+
+release: default-target pkgindex scripts
+install: default-install install-scripts
+install-scripts: scripts
+        @echo Installing scripts to '$(SCRIPT_INSTALL_DIR)'
+	@$(CPY) "$(OUT_DIR)\yajl.tcl" "$(SCRIPT_INSTALL_DIR)"
+
+pkgindex: $(OUT_DIR)\pkgIndex.tcl
+$(OUT_DIR)\pkgIndex.tcl:
+	@echo package ifneeded $(PROJECT) $(DOTVERSION) \
+	    "[list load [file join $$dir $(PRJLIBNAME)]];[list source [file join $$dir yajl.tcl]]" > $(OUT_DIR)\pkgIndex.tcl
+
+scripts: $(OUT_DIR)\yajl.tcl
+$(OUT_DIR)\yajl.tcl:
+	@$(CPY) "$(ROOT)"\yajl.tcl "$(OUT_DIR)"
+
+#$(OUT_DIR)\yail.tcl: $(ROOT)\yajl.tcl
+
+$(GENERICDIR)\yajltcl.c : $(GENERICDIR)\yajltcl.h $(GENERICDIR)\yajltcllex.h
+
+$(GENERICDIR)\tclyajltcl.c : $(GENERICDIR)\yajltcl.h
+
+$(GENERICDIR)\yajltcllex.c : $(GENERICDIR)\yajltcllex.h
