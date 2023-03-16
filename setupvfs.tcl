@@ -359,13 +359,35 @@ proc vfscopy {argv} {
     }
 
     switch -- [file extension $src] {
-      .tcl - .txt - .msg - .test {
+      .tcl - .tm - .txt - .msg - .test {
         # get line-endings right for text files - this is crucial for boot.tcl
         # and several scripts in lib/vlerq4/ which are loaded before vfs works
         set fin [open $src r]
         set fout [open $dest w]
         fconfigure $fout -translation lf
-        fcopy $fin $fout
+        if {[file extension $src] in {.tcl .tm .msg}} {
+          # strip all comments and white space from the standard scripts
+          while {![eof $fin]} {
+            gets $fin s
+            if {$s != ""} {
+              # get rid of whitespaces
+              set s [string trim $s]
+              # drop empty strings and comments
+              if {([string range $s 0 3] == "\#def") 
+                  || (($s != "") && ([string index $s 0] != "#"))} {
+                # merge splitted strings back
+                if {[string index $s end] == "\\"} {
+                  puts -nonewline $fout [string replace $s end end " "]
+                } {
+                  puts -nonewline $fout $s
+                  puts $fout ""
+                }
+              }
+            }
+          }
+        } else {
+            fcopy $fin $fout
+        }
         close $fin
         close $fout
       }
@@ -388,6 +410,9 @@ proc vfscreate {f content} {
   }
 
   set h [open $vfs/$f w]
+  if {[file extension $f] in {.tcl .tm .txt .msg .test}} {
+    fconfigure $h -translation lf
+  }
   puts $h $content
   close $h
 
