@@ -62,7 +62,7 @@ UPXLEVEL=1
 !endif
 
 !ifndef CUSTOM
-CUSTOM=0
+CUSTOM=""
 !endif
 
 MAKE    = $(MAKE) -nologo
@@ -137,9 +137,9 @@ UPXCOMP = upx -q9 $@ >NUL
 !endif
 !endif
 
-!if $(CUSTOM)
-PARTS = $(PARTS) custom
-KITOPTS = $(KITOPTS) -c ..\..\setupvfs-custom.tcl 
+!if "$(CUSTOM)" != ""
+PARTS = $(PARTS) $(CUSTOM)
+KITOPTS = $(KITOPTS) -d -c ../../setupvfs-custom.tcl 
 CFLAGS=$(CFLAGS) -DKIT_INCLUDES_CUSTOM=1
 !endif
 
@@ -221,7 +221,7 @@ tclkit-gui: tclkit-gui.exe
 tclkitsh:   tclkitsh.exe
 tclkit:     tclkit.exe
 
-!if $(CUSTOM)
+!if "$(CUSTOM)" != ""
 !include Makefile-custom.vc
 !endif
 
@@ -308,7 +308,7 @@ tcl: $(BUILD)\lib\tcl$V$X.lib
 $(BUILD)\lib\tcl$V$X.lib:
 	pushd ..\tcl\win & $(MAKE) -f Makefile.vc INSTALLDIR=$(BUILD) \
 	  OPTS=$(OPTS) TMP_DIR=$(BUILD)\tcl $(TCL_MAKE_FLAGS) \
-	  OUT_DIR=$(BUILD)\tcl release & \
+	  OUT_DIR=$(BUILD)\tcl core dlls shell & \
 	  $(MAKE) -f Makefile.vc INSTALLDIR=$(BUILD) \
 	  OPTS=$(OPTS) TMP_DIR=$(BUILD)\tcl \
 	  OUT_DIR=$(BUILD)\tcl install-binaries install-libraries
