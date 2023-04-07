@@ -359,13 +359,35 @@ proc vfscopy {argv} {
     }
 
     switch -- [file extension $src] {
-      .tcl - .txt - .msg - .test {
+      .tcl - .tm - .txt - .msg - .test {
         # get line-endings right for text files - this is crucial for boot.tcl
         # and several scripts in lib/vlerq4/ which are loaded before vfs works
         set fin [open $src r]
         set fout [open $dest w]
         fconfigure $fout -translation lf
-        fcopy $fin $fout
+        if {[file extension $src] in {.tcl .tm .msg}} {
+          # strip all comments and white space from the standard scripts
+          while {![eof $fin]} {
+            gets $fin s
+            if {$s != ""} {
+              # get rid of whitespaces
+              set s [string trim $s]
+              # drop empty strings and comments
+              if {([string range $s 0 3] == "\#def") 
+                  || (($s != "") && ([string index $s 0] != "#"))} {
+                # merge splitted strings back
+                if {[string index $s end] == "\\"} {
+                  puts -nonewline $fout [string replace $s end end " "]
+                } {
+                  puts -nonewline $fout $s
+                  puts $fout ""
+                }
+              }
+            }
+          }
+        } else {
+            fcopy $fin $fout
+        }
         close $fin
         close $fout
       }
@@ -378,6 +400,27 @@ proc vfscopy {argv} {
   }
 }
 
+# create file in m2m-mounted vfs
+proc vfscreate {f content} {
+  global vfs versmap
+  set f [string map $versmap $f]
+  set d $vfs/[file dirname $f]
+  if {![file isdir $d]} {
+    file mkdir $d
+  }
+
+  set h [open $vfs/$f w]
+  if {[file extension $f] in {.tcl .tm .txt .msg .test}} {
+    fconfigure $h -translation lf
+  }
+  puts $h $content
+  close $h
+
+  if {$::debugOpt} {
+    puts "  $f ==>  \$vfs/$f"
+  }
+}
+
 # Create a pkgIndex file for a statick package 'pkg'. If the version
 # is not provided then it is detected when creating the vfs.
 proc staticpkg {pkg {ver {}} {init {}}} {
@@ -386,12 +429,8 @@ proc staticpkg {pkg {ver {}} {init {}}} {
         load {} $pkg
         set ver [package provide $pkg]
     }
-    set extdir [file join $vfs lib $pkg]
-    file mkdir $extdir
     if {$init eq {}} {set init $pkg}
-    set f [open $extdir/pkgIndex.tcl w]
-    puts $f "package ifneeded $pkg $ver {load {} $init}"
-    close $f
+    vfscreate lib/$pkg/pkgIndex.tcl "package ifneeded $pkg $ver {load {} $init}"
 }
 
 set vfs [lindex $argv 0]
@@ -415,11 +454,8 @@ switch [info sharedlibext] {
     foreach ext {dde registry} {
       if {[catch {
           load {} $ext
-          set extdir [file join $vfs lib $ext]
-          file mkdir $extdir
-          set f [open $extdir/pkgIndex.tcl w]
-          puts $f "package ifneeded $ext [package provide $ext] {load {} $ext}"
-          close $f
+          vfscreate lib/$ext/pkgIndex.tcl \
+              "package ifneeded $ext [package provide $ext] {load {} $ext}"
       } err]} { puts "ERROR: $err"}
     }
     catch {
@@ -469,20 +505,15 @@ switch [lindex $argv 1] {
   gui {
     vfscopy $clifiles
     vfscopy $guifiles
-    set fn $vfs/[string map $versmap lib/tk8@/pkgIndex.tcl]
-    set f [open $fn w]
-    puts $f "package ifneeded Tk $tkver {load {} Tk}"
-    close $f
+    vfscreate lib/tk8@/pkgIndex.tcl "package ifneeded Tk $tkver {load {} Tk}"
   }
   dyn {
     vfscopy $clifiles
     vfscopy $guifiles
     vfscopy lib/libtk$tcl_version[info sharedlibext]
-    set f [open $vfs/[string map $versmap lib/tk8@/pkgIndex.tcl] w]
-    puts $f "package ifneeded Tk $tkver\
+    vfscreate lib/tk8@/pkgIndex.tcl "package ifneeded Tk $tkver\
       \[list load \[file join \[list \$dir\] ..\
       libtk$tcl_version\[info sharedlibext\]\] Tk\]"
-    close $f
   }
   default {
     puts stderr "Unknown type, must be one of: cli, dyn, gui"

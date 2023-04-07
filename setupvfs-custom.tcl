@@ -1,15 +1,15 @@
+if {"tcltls" in $::env(CUSTOM)} {
+  vfscreate lib/tls1.7.22/pkgIndex.tcl \
+     "package ifneeded tls 1.7.22 \"load {} Tls\""
+}
+
 if {"yajltcl" in $::env(CUSTOM)} {
-    vfscopy lib/yajltcl1.7.0/yajl.tcl
-    set fn $vfs/lib/yajltcl1.7.0/pkgIndex.tcl
-    set f [open $fn w]
-    puts $f "package ifneeded yajltcl 1.7.0 \"load {} Yajltcl; \[list source \[file join \$dir yajl.tcl]]\""
-    close $f
+  vfscopy lib/yajltcl1.7.0/yajl.tcl
+  vfscreate lib/yajltcl1.7.0/pkgIndex.tcl \
+     "package ifneeded yajltcl 1.7.0 \"load {} Yajltcl; \[list source \[file join \$dir yajl.tcl]]\""
 }
 
 if {"tcltdjson" in $::env(CUSTOM)} {
-    vfscopy lib/tcltdjson0.1/pkgIndex.tcl
-    set fn $vfs/lib/tcltdjson0.1/pkgIndex.tcl
-    set f [open $fn w]
-    puts $f "package ifneeded tcltdjson 0.1 \"load {} Tcltdjson\""
-    close $f
+  vfscreate lib/tcltdjson0.1/pkgIndex.tcl \
+      "package ifneeded tcltdjson 0.1 \"load {} Tcltdjson\""
 }

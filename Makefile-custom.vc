@@ -1,3 +1,25 @@
+!if "$(CUSTOM:tcltls=)" != "$(CUSTOM)"
+
+!if $(SYMBOLS)
+SSLX=d
+!endif
+
+tcltls: $(BUILD)\lib\tls1.7.22\tls1722$X.lib
+$(BUILD)\lib\tls1.7.22\tls1722$X.lib:
+	-md $(BUILD)\tcltls
+	pushd ..\..\8.x\tcltls\win & $(MAKE) -f Makefile.vc \
+	  INSTALLDIR=$(BUILD) OPTS=$(OPTS) TMP_DIR=$(BUILD)\tcltls \
+	  OUT_DIR=$(BUILD)\tcltls SSL_INSTALL_FOLDER=$(SSLROOT) default-target install
+
+TCLTLS_LIBS = \
+	$(SSLROOT)\lib\VC\static\libssl64MD$(SSLX).lib \
+	$(SSLROOT)\lib\VC\static\libcrypto64MD$(SSLX).lib \
+	Crypt32.lib
+
+LIBS = $(LIBS) $(BUILD)\lib\tls1.7.22\tls1722$X.lib $(TCLTLS_LIBS)
+CFLAGS=$(CFLAGS) -DKIT_INCLUDES_TCLTLS=1
+
+!endif
 
 !if "$(CUSTOM:yajltcl=)" != "$(CUSTOM)"
 
@@ -40,12 +62,10 @@ TDLIB_LIBS = \
 	$(TDROOT)\lib\tdsqlite.lib \
 	$(TDROOT)\lib\tdapi.lib \
 	$(TDROOT)\lib\tdutils.lib \
-	$(SSLROOT)\lib\libcrypto_static.lib \
-	$(SSLROOT)\lib\libssl_static.lib \
-        $(ZLIB)\zlib.lib \
-        ws2_32.lib Crypt32.lib Normaliz.lib psapi.lib
-#	$(SSLROOT)\lib\VC\libssl64MD.lib
-#	$(SSLROOT)\lib\VC\libcrypto64MD.lib
+	$(SSLROOT)\lib\VC\static\libssl64MD$(SSLX).lib \
+	$(SSLROOT)\lib\VC\static\libcrypto64MD$(SSLX).lib \
+	$(BUILD)\..\..\..\8.x\zlib\zlib.lib \
+ 	ws2_32.lib Crypt32.lib Normaliz.lib psapi.lib
 
 LIBS = $(LIBS) $(BUILD)\lib\tcltdjson0.1\tcltdjson01*.lib $(TDLIB_LIBS)
 CFLAGS=$(CFLAGS) -DKIT_INCLUDES_TCLTDJSON=1
