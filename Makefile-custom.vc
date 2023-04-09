@@ -45,7 +45,7 @@ CFLAGS=$(CFLAGS) -DKIT_INCLUDES_YAJLTCL=1
 !if "$(CUSTOM:tcltdjson=)" != "$(CUSTOM)"
 
 tcltdjson: $(BUILD)\lib\tcltdjson0.1\tcltdjson01$X.lib
-$(BUILD)\lib\tcltdjson0.1\tcltdjson01$X.lib:
+$(BUILD)\lib\tcltdjson0.1\tcltdjson01$X.lib: zlib
 	-md $(BUILD)\tcltdjson
 	pushd ..\..\8.x\tcltdjson\win & $(MAKE) -f Makefile.vc \
 	  INSTALLDIR=$(BUILD) OPTS=$(OPTS) TMP_DIR=$(BUILD)\tcltdjson \

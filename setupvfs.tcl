@@ -366,23 +366,21 @@ proc vfscopy {argv} {
         set fout [open $dest w]
         fconfigure $fout -translation lf
         if {[file extension $src] in {.tcl .tm .msg}} {
-          # strip all comments and white space from the standard scripts
+          # strip line comments and white space from the standard scripts
+          set continue 0
+          set s ""
           while {![eof $fin]} {
-            gets $fin s
-            if {$s != ""} {
-              # get rid of whitespaces
-              set s [string trim $s]
-              # drop empty strings and comments
-              if {([string range $s 0 3] == "\#def") 
-                  || (($s != "") && ([string index $s 0] != "#"))} {
-                # merge splitted strings back
-                if {[string index $s end] == "\\"} {
-                  puts -nonewline $fout [string replace $s end end " "]
-                } {
-                  puts -nonewline $fout $s
-                  puts $fout ""
+            append s [string trim [gets $fin]]
+            # FIXME: buggy on double slash at the string end?
+            if {[string index $s end] eq "\\"} {
+              set s [string replace $s end end " "]
+            } else {
+              if {[string length $s]} {
+                if {[string index $s 0] ne "#" || [string range $s 0 3] eq "#def"} {
+                  puts $fout $s
                 }
               }
+              set s ""
             }
           }
         } else {

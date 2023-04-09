@@ -139,7 +139,7 @@ UPXCOMP = upx -q9 $@ >NUL
 
 !if "$(CUSTOM)" != ""
 PARTS = $(PARTS) $(CUSTOM)
-KITOPTS = $(KITOPTS) -d -c ../../setupvfs-custom.tcl 
+KITOPTS = $(KITOPTS) -c ../../setupvfs-custom.tcl 
 CFLAGS=$(CFLAGS) -DKIT_INCLUDES_CUSTOM=1
 !endif
 
