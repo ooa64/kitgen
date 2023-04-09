@@ -1,23 +1,23 @@
-!if "$(CUSTOM:tcltls=)" != "$(CUSTOM)"
+!if "$(CUSTOM:tls=)" != "$(CUSTOM)"
 
 !if $(SYMBOLS)
 SSLX=d
 !endif
 
-tcltls: $(BUILD)\lib\tls1.7.22\tls1722$X.lib
+tls: $(BUILD)\lib\tls1.7.22\tls1722$X.lib
 $(BUILD)\lib\tls1.7.22\tls1722$X.lib:
-	-md $(BUILD)\tcltls
-	pushd ..\..\8.x\tcltls\win & $(MAKE) -f Makefile.vc \
-	  INSTALLDIR=$(BUILD) OPTS=$(OPTS) TMP_DIR=$(BUILD)\tcltls \
-	  OUT_DIR=$(BUILD)\tcltls SSL_INSTALL_FOLDER=$(SSLROOT) default-target install
+	-md $(BUILD)\tls
+	pushd ..\..\8.x\tls\win & $(MAKE) -f Makefile.vc \
+	  INSTALLDIR=$(BUILD) OPTS=$(OPTS) TMP_DIR=$(BUILD)\tls \
+	  OUT_DIR=$(BUILD)\tls SSL_INSTALL_FOLDER=$(SSLROOT) default-target install
 
-TCLTLS_LIBS = \
+TLS_LIBS = \
 	$(SSLROOT)\lib\VC\static\libssl64MD$(SSLX).lib \
 	$(SSLROOT)\lib\VC\static\libcrypto64MD$(SSLX).lib \
 	Crypt32.lib
 
-LIBS = $(LIBS) $(BUILD)\lib\tls1.7.22\tls1722$X.lib $(TCLTLS_LIBS)
-CFLAGS=$(CFLAGS) -DKIT_INCLUDES_TCLTLS=1
+LIBS = $(LIBS) $(BUILD)\lib\tls1.7.22\tls1722$X.lib $(TLS_LIBS)
+CFLAGS=$(CFLAGS) -DKIT_INCLUDES_TLS=1
 
 !endif
 

@@ -328,7 +328,7 @@ TclKitPathObjCmd(ClientData dummy, Tcl_Interp *interp, int objc, Tcl_Obj *const 
      * determining the location of the base kit.  This is necessary
      * for DLL-based starkits.
      */
-    char* str;
+    const char* str;
     if (objc == 2) {
 	/*
 	 * XXX: Should we allow people to set this?

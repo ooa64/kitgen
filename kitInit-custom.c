@@ -1,4 +1,4 @@
-#if defined(KIT_INCLUDES_TCLTLS)
+#if defined(KIT_INCLUDES_TLS)
     Tcl_AppInitProc Tls_Init, Tls_SafeInit;
     Tcl_StaticPackage(0, "tls", Tls_Init, Tls_SafeInit);
 #endif

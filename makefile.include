@@ -21,18 +21,22 @@ O     ?=.o
 A     ?=.a
 SO    ?=.so
 
+ifdef CUSTOM
+include ../../makefile.custom
+endif
+
 tclkit-cli$(EXE): kit-cli$(EXE) ../../setupvfs.tcl build/files
 	cp kit-cli$(EXE) $@ && $(STRIP) $@ && $(UPX) $@
-	./kit-cli -init- ../../setupvfs.tcl $(KIT_OPTS) $@ cli
-	./$@ ../../validate.tcl
+	env CUSTOM="$(CUSTOM)" ./kit-cli -init- ../../setupvfs.tcl $(KIT_OPTS) $@ cli
+	env CUSTOM="$(CUSTOM)" ./$@ ../../validate.tcl
 
 tclkit-dyn$(EXE): kit-dyn$(EXE) ../../setupvfs.tcl build/files
 	cp kit-dyn$(EXE) $@ && $(STRIP) $@ $@ && $(UPX) $@
-	./kit-cli -init- ../../setupvfs.tcl $(KIT_OPTS) $@ dyn
+	env CUSTOM="$(CUSTOM)" ./kit-cli -init- ../../setupvfs.tcl $(KIT_OPTS) $@ dyn
 
 tclkit-gui$(EXE): kit-cli$(EXE) kit-gui$(EXE) ../../setupvfs.tcl build/files
 	cp kit-gui$(EXE) $@ && $(STRIP) $@ && $(UPX) $@
-	./kit-cli -init- ../../setupvfs.tcl $(KIT_OPTS) $@ gui
+	env CUSTOM="$(CUSTOM)" ./kit-cli -init- ../../setupvfs.tcl $(KIT_OPTS) $@ gui
 
 kit-cli$(EXE): build/tcl build/tclvfs build/vqtcl build/zlib $(CLIOBJ)
 	$(CC) -o $@ $(CFLAGS) ../../kitInit.c $(CLIOBJ) \
@@ -57,6 +61,8 @@ build/files:
 	mkdir -p $@ && cd $@ && cp -p ../../../../files/* .
 
 build/tcl:
+	-mkdir -p $(OUTDIR)/lib
+	-ln -s lib $(OUTDIR)/lib64
 	mkdir -p $@ && cd $@ && CFLAGS="$(CFLAGS)" && export CFLAGS && \
 	  sh ../../../tcl/$(PLAT)/configure $(STATIC) $(TCL_OPTS) \
 	    --prefix=$(OUTDIR) --exec-prefix=$(OUTDIR) && \

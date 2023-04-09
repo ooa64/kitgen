@@ -15,6 +15,9 @@ foreach lib [info loaded] {
     if {[lindex $lib 1] eq "Mk4tcl"} {lappend ext Mk4tcl}
     if {[lindex $lib 1] eq "Itcl"} {lappend ext Itcl}
 }
+if {[info exists env(CUSTOM)]} {
+    set ext [concat $ext $env(CUSTOM)]
+}
 set r {}
 foreach pkg $ext {lappend r $pkg [package require $pkg]}
 puts "main  : $r"

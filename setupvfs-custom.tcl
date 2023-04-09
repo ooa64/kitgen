@@ -1,4 +1,4 @@
-if {"tcltls" in $::env(CUSTOM)} {
+if {"tls" in $::env(CUSTOM)} {
   vfscreate lib/tls1.7.22/pkgIndex.tcl \
      "package ifneeded tls 1.7.22 \"load {} Tls\""
 }

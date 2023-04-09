@@ -15,7 +15,7 @@ if test ! -d $root
   then echo "error: directory '$root' does not exist"; exit 1; fi
 
 for v in allenc allmsgs aqua b64 cli dyn gui ppc mk \
-          gcov gprof sym thread tzdata univ x86
+          gcov gprof sym thread tzdata univ x86 cust
   do eval $v=0; done
 
 while test $# != 0
@@ -189,6 +189,14 @@ case $cli-$dyn-$gui in 0-0-0) cli=1 dyn=1 gui=1 ;; esac
     echo "VLERQ_OPTS     += --enable-symbols"
     echo "MK_OPTS        += --enable-symbols"
     echo "ITCL_OPTS      += --enable-symbols"
+    echo ;;
+  esac
+
+  case $cust in 1)
+    echo "CUSTOM     = custom"
+    echo "CFLAGS    += -DKIT_INCLUDES_CUSTOM"
+    echo "KIT_OPTS  += -c ../../setupvfs-custom.tcl"
+    targets="$targets custom"
     echo ;;
   esac
 

@@ -1,0 +1,45 @@
+CUSTOM  =
+
+tls: build/tls
+build/tls: build/tcl
+	mkdir -p $@ && cd $@ && CFLAGS="$(CFLAGS)" && export CFLAGS && \
+	  sh $(EXTDIR)/tls/configure $(STATIC) $(TCLDIR) $(TLS_OPTS) && \
+	  $(MAKE) install
+
+LDFLAGS += build/lib/tcltls1*/*tcltls*.a -lssl -lcrypto
+CFLAGS  += -DKIT_INCLUDES_TLS
+CUSTOM  += tls
+
+yajltcl: build/yajltcl
+build/yajltcl: build/tcl
+	mkdir -p $@ && cd $@ && CFLAGS="$(CFLAGS)" && export CFLAGS && \
+	  sh $(EXTDIR)/yajltcl/configure $(STATIC) $(TCLDIR) $(YAJLTCL_OPTS) && \
+	  $(MAKE) install
+
+LDFLAGS += build/lib/yajltcl1*/*yajltcl1*.a -lyajl_s
+CFLAGS  += -DKIT_INCLUDES_YAJLTCL
+CUSTOM  += yajltcl
+
+TDSHARED = no
+TDHOME   = /opt/tdlib
+ifneq ($(TDSHARED),no)
+TDLDFLAGS	= -ltdjson
+TDCFLAGS	=
+else
+TDLDFLAGS	= -ltdjson_static -ltdjson_private -ltdclient -ltdcore -ltdnet -ltdactor -ltddb -ltdsqlite -ltdapi -ltdutils -lstdc++ -lssl -lcrypto
+TDCFLAGS	= -DTDJSON_STATIC_DEFINE
+endif
+
+TCLTDJSON_OPTS += --with-tdlib=$(TDHOME) --enable-tdshared=$(TDSHARED)
+
+tcltdjson: build/tcltdjson
+build/tcltdjson:
+	mkdir -p $@ && cd $@ && CFLAGS="$(CFLAGS)" && export CFLAGS && \
+	  sh $(EXTDIR)/tcltdjson/configure $(STATIC) $(TCLDIR) $(TCLTDJSON_OPTS) && \
+	  $(MAKE) install
+
+LDFLAGS += build/lib/tcltdjson0*/*tcltdjson*.a -L$(TDHOME)/lib $(TDLDFLAGS)
+CFLAGS  += -DKIT_INCLUDES_TCLTDJSON $(TDCFLAGS)
+CUSTOM  += tcltdjson
+
+custom: $(CUSTOM)
