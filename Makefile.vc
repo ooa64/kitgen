@@ -115,7 +115,7 @@ LIBS  = $(BUILD)\lib\zlib.lib $(LIBS)
 PARTS   = vqtcl vfs thread
 KITOPTS = -T
 CFLAGS=$(CFLAGS) -DKIT_INCLUDES_THREADS=1
-LIBS = $(LIBS) $(BUILD)\lib\thread2.8.8\thread288*.lib
+LIBS = $(LIBS) $(BUILD)\lib\thread2.8.10\thread28*.lib
 !endif
 
 !if $(SYMBOLS)
@@ -333,8 +333,8 @@ $(BUILD)\lib\threaddyn\thread26.dll:
 	  INSTALLDIR=$(BUILD) OPTS=none TMP_DIR=$(BUILD)\threaddyn \
 	  OUT_DIR=$(BUILD)\threaddyn default-target default-install
 
-thread: $(BUILD)\lib\thread2.8.8\thread288$X.lib
-$(BUILD)\lib\thread2.8.8\thread288$X.lib:
+thread: $(BUILD)\lib\thread2.8.10\thread2810$X.lib
+$(BUILD)\lib\thread2.8.10\thread2810$X.lib:
 	pushd ..\..\8.x\thread\win & $(MAKE) -f Makefile.vc \
 	  INSTALLDIR=$(BUILD) OPTS=$(OPTS) TMP_DIR=$(BUILD)\thread \
 	  OUT_DIR=$(BUILD)\thread default-target default-install

@@ -124,7 +124,7 @@ proc tclInit {} {
     
     # reset auto_path, so that init.tcl's search outside of tclkit is cancelled
     if {[info exists env(TCLLIBPATH)]} {
-	set auto_path [concat $env(TCLLIBPATH) $tcl_libPath]
+        set auto_path [concat $env(TCLLIBPATH) $tcl_libPath]
     } else {
         set auto_path $tcl_libPath
     }
