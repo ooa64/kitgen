@@ -1,3 +1,18 @@
+!if "$(CUSTOM:tbcload=)" != "$(CUSTOM)"
+
+tbcload: $(BUILD)\lib\tbcload1.7.0\tbcload170$X.lib
+
+$(BUILD)\lib\tbcload1.7.0\tbcload170$X.lib:
+	-md $(BUILD)\tbcload
+	pushd ..\..\8.x\tbcload\win & $(MAKE) -f Makefile.vc \
+	  INSTALLDIR=$(BUILD) TCLDIR=$(BUILD)\..\..\tcl OPTS=$(OPTS) TMP_DIR=$(BUILD)\tbcload \
+	  OUT_DIR=$(BUILD)\tbcload default-target install
+
+LIBS = $(LIBS) $(BUILD)\lib\tbcload1.7.0\tbcload170$X.lib
+CFLAGS=$(CFLAGS) -DKIT_INCLUDES_TBCLOAD=1
+
+!endif
+
 !if "$(CUSTOM:tls=)" != "$(CUSTOM)"
 
 !if $(SYMBOLS)

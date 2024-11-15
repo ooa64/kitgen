@@ -1,3 +1,8 @@
+#if defined(KIT_INCLUDES_TBCLOAD)
+    Tcl_AppInitProc Tbcload_Init, Tbcload_SafeInit;
+    Tcl_StaticPackage(0, "Tbcload", Tbcload_Init, Tbcload_SafeInit);
+#endif
+
 #if defined(KIT_INCLUDES_TLS)
     Tcl_AppInitProc Tls_Init, Tls_SafeInit;
     Tcl_StaticPackage(0, "tls", Tls_Init, Tls_SafeInit);

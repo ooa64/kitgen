@@ -1,3 +1,8 @@
+if {"tbcload" in $::env(CUSTOM)} {
+  vfscreate lib/tbcload1.7.0/pkgIndex.tcl \
+     "package ifneeded tbcload 1.7.0 \"load {} Tbcload\""
+}
+
 if {"tls" in $::env(CUSTOM)} {
   vfscreate lib/tls1.7.22/pkgIndex.tcl \
      "package ifneeded tls 1.7.22 \"load {} Tls\""
