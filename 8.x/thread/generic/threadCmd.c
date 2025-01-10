@@ -28,7 +28,7 @@
  * files built as part of that shell. Example: basekits.
  */
 #ifndef PACKAGE_VERSION
-#define PACKAGE_VERSION "2.8.8"
+#define PACKAGE_VERSION "2.8.10"
 #endif
 
 /*
@@ -297,7 +297,6 @@ ThreadInit(Tcl_Interp *interp);
 static int
 ThreadCreate(Tcl_Interp *interp,
                                const char *script,
-                               int stacksize,
                                int flags,
                                int preserve);
 static int
@@ -688,7 +687,7 @@ ThreadCreateObjCmd(
         }
     }
 
-    return ThreadCreate(interp, script, TCL_THREAD_STACK_DEFAULT, flags, rsrv);
+    return ThreadCreate(interp, script, flags, rsrv);
 
  usage:
     Tcl_WrongNumArgs(interp, 1, objv, "?-joinable? ?script?");
@@ -1793,7 +1792,6 @@ static int
 ThreadCreate(
     Tcl_Interp *interp,        /* Current interpreter. */
     const char *script,        /* Script to evaluate */
-    int         stacksize,     /* Zero for default size */
     int         flags,         /* Zero for no flags */
     int         preserve       /* If true, reserve the thread */
 ) {
@@ -1808,7 +1806,7 @@ ThreadCreate(
 
     Tcl_MutexLock(&threadMutex);
     if (Tcl_CreateThread(&thrId, NewThread, &ctrl,
-            stacksize, flags) != TCL_OK) {
+            TCL_THREAD_STACK_DEFAULT, flags) != TCL_OK) {
         Tcl_MutexUnlock(&threadMutex);
         Tcl_SetObjResult(interp, Tcl_NewStringObj("can't create a new thread", -1));
         return TCL_ERROR;
@@ -3426,7 +3424,7 @@ ThreadGetOption(
         if (len == 0) {
             Tcl_DStringAppendElement(dsPtr, "-eventmark");
         }
-        sprintf(buf, "%d", tsdPtr->maxEventsCount);
+        snprintf(buf, sizeof(buf), "%d", tsdPtr->maxEventsCount);
         Tcl_DStringAppendElement(dsPtr, buf);
         if (len != 0) {
             Tcl_MutexUnlock(&threadMutex);
@@ -3853,7 +3851,7 @@ ThreadGetHandle(
     Tcl_ThreadId thrId,
     char *handlePtr
 ) {
-    sprintf(handlePtr, THREAD_HNDLPREFIX "%p", thrId);
+    snprintf(handlePtr, THREAD_HNDLMAXLEN, THREAD_HNDLPREFIX "%p", thrId);
 }
 
 /*

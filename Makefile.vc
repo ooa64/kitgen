@@ -113,7 +113,7 @@ LIBS  = $(BUILD)\lib\zlib.lib $(LIBS)
 
 !if $V == 86
 PARTS   = vqtcl vfs thread
-KITOPTS = -T
+KITOPTS = $(KITOPTS) -T
 CFLAGS=$(CFLAGS) -DKIT_INCLUDES_THREADS=1
 LIBS = $(LIBS) $(BUILD)\lib\thread2.8.10\thread28*.lib
 !endif
@@ -328,7 +328,7 @@ $(BUILD)\lib\vqtcl4.1\vqtcl41$(X:t=).lib:
 	  OUT_DIR=$(BUILD)\vqtcl all install
 
 threaddyn: $(BUILD)\lib\threaddyn\thread26.dll
-$(BUILD)\lib\threaddyn\thread26.dll:
+$(BUILD)\lib\threaddyn\thread28.dll:
 	pushd ..\..\8.x\thread\win & $(MAKE) -f Makefile.vc \
 	  INSTALLDIR=$(BUILD) OPTS=none TMP_DIR=$(BUILD)\threaddyn \
 	  OUT_DIR=$(BUILD)\threaddyn default-target default-install

@@ -104,7 +104,16 @@ proc tclInit {} {
                 default		{ encoding system iso8859-1 }
             }
         }
-
+        # set encoding for redirected stdout/stderr (ooa: tclkit bug?)
+        if {[fconfigure stdout -encoding] eq "iso8859-1"} {
+            fconfigure stdout -encoding [encoding system]
+        }
+        if {[fconfigure stderr -encoding] eq "iso8859-1"} {
+            fconfigure stderr -encoding [encoding system]
+        }
+        if {[fconfigure stdin -encoding] eq "iso8859-1"} {
+            fconfigure stdin -encoding [encoding system]
+        }
         # now remount the executable with the correct encoding
         vfs::filesystem unmount $noe
         set noe $::tcl::kitpath
