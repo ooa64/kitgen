@@ -1,3 +1,7 @@
+if {[file readable setupvfs-local.tcl]} {
+  source setupvfs-local.tcl
+}
+
 if {"tbcload" in $::env(CUSTOM)} {
   vfscreate lib/tbcload1.7.0/pkgIndex.tcl \
      "package ifneeded tbcload 1.7.0 \"load {} Tbcload\""
