@@ -17,3 +17,9 @@
     Tcl_AppInitProc Tcltdjson_Init;
     Tcl_StaticPackage(0, "tcltdjson", Tcltdjson_Init, NULL);
 #endif
+
+#if defined(KIT_INCLUDES_TCLDBF)
+    Tcl_AppInitProc Tcldbf_Init;
+    Tcl_StaticPackage(0, "Tcldbf", Tcldbf_Init, NULL);
+#endif
+

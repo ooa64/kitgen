@@ -1,3 +1,6 @@
+    vfscopy lib/tcl8.6/encoding/cp1125.enc 
+    vfscopy lib/tcl8.6/msgs/uk.msg
+
 if {"tbcload" in $::env(CUSTOM)} {
   vfscreate lib/tbcload1.7.0/pkgIndex.tcl \
      "package ifneeded tbcload 1.7.0 \"load {} Tbcload\""
@@ -18,3 +21,9 @@ if {"tcltdjson" in $::env(CUSTOM)} {
   vfscreate lib/tcltdjson0.1/pkgIndex.tcl \
       "package ifneeded tcltdjson 0.1 \"load {} Tcltdjson\""
 }
+
+if {"tcldbf" in $::env(CUSTOM)} {
+  vfscreate lib/tcldbf2.1.0/pkgIndex.tcl \
+     "package ifneeded tcldbf 2.1.0 \"load {} Tcldbf\""
+}
+

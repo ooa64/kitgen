@@ -1,3 +1,4 @@
+
 !if "$(CUSTOM:tbcload=)" != "$(CUSTOM)"
 
 tbcload: $(BUILD)\lib\tbcload1.7.0\tbcload170$X.lib
@@ -84,5 +85,20 @@ TDLIB_LIBS = \
 
 LIBS = $(LIBS) $(BUILD)\lib\tcltdjson0.1\tcltdjson01*.lib $(TDLIB_LIBS)
 CFLAGS=$(CFLAGS) -DKIT_INCLUDES_TCLTDJSON=1
+
+!endif
+
+!if "$(CUSTOM:tcldbf=)" != "$(CUSTOM)"
+
+tcldbf: $(BUILD)\lib\tcldbf2.1.0\tcldbf210$X.lib
+
+$(BUILD)\lib\tcldbf2.1.0\tcldbf210$X.lib:
+	-md $(BUILD)\tcldbf
+	pushd ..\..\8.x\tcldbf\win & $(MAKE) -f Makefile.vc \
+	  INSTALLDIR=$(BUILD) OPTS=$(OPTS) TMP_DIR=$(BUILD)\tcldbf \
+	  OUT_DIR=$(BUILD)\tcldbf default-target install
+
+LIBS = $(LIBS) $(BUILD)\tcldbf\tcldbf210$X.lib
+CFLAGS=$(CFLAGS) -DKIT_INCLUDES_TCLDBF=1
 
 !endif
