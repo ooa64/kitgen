@@ -42,4 +42,14 @@ LDFLAGS += build/lib/tcltdjson0*/*tcltdjson*.a -L$(TDHOME)/lib $(TDLDFLAGS)
 CFLAGS  += -DKIT_INCLUDES_TCLTDJSON $(TDCFLAGS)
 CUSTOM  += tcltdjson
 
+tcldbf: build/tcldbf
+build/tcldbf: build/tcl
+	mkdir -p $@ && cd $@ && CFLAGS="$(CFLAGS)" && export CFLAGS && \
+	  sh $(EXTDIR)/tcldbf/configure $(STATIC) $(TCLDIR) $(TCLDBF_OPTS) && \
+	  $(MAKE) install
+
+LDFLAGS += build/lib/tcldbf2*/*tcldbf2*.a
+CFLAGS  += -DKIT_INCLUDES_TCLDBF
+CUSTOM  += tcldbf
+
 custom: $(CUSTOM)
