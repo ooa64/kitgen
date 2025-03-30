@@ -35,4 +35,6 @@ base tidy:
 all clean distclean tclkit-cli tclkit-dyn tclkit-gui:
 	for i in 8*/kit-*/Makefile; do (cd `dirname $$i`; $(MAKE) $@); done
 
-.PHONY: all base tidy clean distclean small large tars configs
+.PHONY: all base tidy clean distclean small large tars configs custom
+
+include Makefile-custom.vc

@@ -193,7 +193,6 @@ case $cli-$dyn-$gui in 0-0-0) cli=1 dyn=1 gui=1 ;; esac
   esac
 
   case $cust in 1)
-    echo "CUSTOM     = custom"
     echo "CFLAGS    += -DKIT_INCLUDES_CUSTOM"
     echo "KIT_OPTS  += -c ../../setupvfs-custom.tcl"
     targets="$targets custom"

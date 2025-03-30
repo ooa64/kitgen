@@ -1,4 +1,5 @@
-CUSTOM  =
+
+ifneq (,$(findstring tls,$(CUSTOM)))
 
 tls: build/tls
 build/tls: build/tcl
@@ -8,7 +9,10 @@ build/tls: build/tcl
 
 LDFLAGS += build/lib/tcltls1*/*tcltls*.a -lssl -lcrypto
 CFLAGS  += -DKIT_INCLUDES_TLS
-CUSTOM  += tls
+
+endif
+
+ifneq (,$(findstring yajltcl,$(CUSTOM)))
 
 yajltcl: build/yajltcl
 build/yajltcl: build/tcl
@@ -18,7 +22,10 @@ build/yajltcl: build/tcl
 
 LDFLAGS += build/lib/yajltcl1*/*yajltcl1*.a -lyajl_s
 CFLAGS  += -DKIT_INCLUDES_YAJLTCL
-CUSTOM  += yajltcl
+
+endif
+
+ifneq (,$(findstring tcltdjson,$(CUSTOM)))
 
 TDSHARED = no
 TDHOME   = /opt/tdlib
@@ -40,7 +47,10 @@ build/tcltdjson:
 
 LDFLAGS += build/lib/tcltdjson0*/*tcltdjson*.a -L$(TDHOME)/lib $(TDLDFLAGS)
 CFLAGS  += -DKIT_INCLUDES_TCLTDJSON $(TDCFLAGS)
-CUSTOM  += tcltdjson
+
+endif
+
+ifneq (,$(findstring tcldbf,$(CUSTOM)))
 
 tcldbf: build/tcldbf
 build/tcldbf: build/tcl
@@ -48,8 +58,9 @@ build/tcldbf: build/tcl
 	  sh $(EXTDIR)/tcldbf/configure $(STATIC) $(TCLDIR) $(TCLDBF_OPTS) && \
 	  $(MAKE) install
 
-LDFLAGS += build/lib/tcldbf2*/*tcldbf2*.a
+LDFLAGS += build/lib/tcldbf2*/*tcldbf2*.a -lstdc++
 CFLAGS  += -DKIT_INCLUDES_TCLDBF
-CUSTOM  += tcldbf
+
+endif
 
 custom: $(CUSTOM)
