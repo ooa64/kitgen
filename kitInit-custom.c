@@ -23,3 +23,8 @@
     Tcl_StaticPackage(0, "Tcldbf", Tcldbf_Init, NULL);
 #endif
 
+#if defined(KIT_INCLUDES_TCLPARSER)
+    Tcl_AppInitProc Tclparser_Init;
+    Tcl_StaticPackage(0, "parser", Tclparser_Init, NULL);
+#endif
+
