@@ -28,3 +28,7 @@ if {"tcldbf" in $::env(CUSTOM)} {
      "package ifneeded tcldbf 2.1.0 \"load {} Tcldbf\""
 }
 
+if {"parser" in $::env(CUSTOM)} {
+  vfscreate lib/tclparser1.9/pkgIndex.tcl \
+     "package ifneeded parser 1.9 \"load {} Parser\""
+}

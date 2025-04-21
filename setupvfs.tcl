@@ -135,7 +135,6 @@ set guifiles {
   lib/tk8@/menu.tcl
   lib/tk8@/mkpsenc.tcl
   lib/tk8@/msgbox.tcl
-  lib/tk8@/msgs
   lib/tk8@/obsolete.tcl
   lib/tk8@/optMenu.tcl
   lib/tk8@/palette.tcl
@@ -152,6 +151,9 @@ set guifiles {
   lib/tk8@/unsupported.tcl
   lib/tk8@/xmfbox.tcl
   lib/tk8@/images/logo64.gif
+}
+if {$msgsOpt} {
+    lappend guifileslib/tk8@/msgs
 }
 # handle new or deleted files
 foreach f {
