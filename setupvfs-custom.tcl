@@ -3,8 +3,8 @@ if {[file readable setupvfs-local.tcl]} {
 }
 
 if {"tbcload" in $::env(CUSTOM)} {
-  vfscreate lib/tbcload1.7.0/pkgIndex.tcl \
-     "package ifneeded tbcload 1.7.0 \"load {} Tbcload\""
+  vfscreate lib/tbcload1.7.2/pkgIndex.tcl \
+     "package ifneeded tbcload 1.7.2 \"load {} Tbcload\""
 }
 
 if {"tls" in $::env(CUSTOM)} {

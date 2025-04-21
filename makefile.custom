@@ -63,4 +63,30 @@ CFLAGS  += -DKIT_INCLUDES_TCLDBF
 
 endif
 
+ifneq (,$(findstring tbcload,$(CUSTOM)))
+
+tbcload: build/tbcload
+build/tbcload: build/tcl
+	mkdir -p $@ && cd $@ && echo PWD=`pwd` && CFLAGS="$(CFLAGS)" && export CFLAGS && \
+	  sh $(EXTDIR)/tbcload/configure $(STATIC) $(TCLDIR) $(TBCLOAD_OPTS) && \
+	  echo `pwd` && cp ../../../tcl/generic/tclCompile.h $(EXTDIR)/tbcload/ && $(MAKE) install
+
+LDFLAGS += build/lib/tbcload*/*tbcload*.a
+CFLAGS  += -DKIT_INCLUDES_TBCLOAD
+
+endif
+
+ifneq (,$(findstring parser,$(CUSTOM)))
+
+parser: build/parser
+build/parser: build/tcl
+	mkdir -p $@ && cd $@ && CFLAGS="$(CFLAGS)" && export CFLAGS && \
+	  sh $(EXTDIR)/tclprodebug/lib/tclparser/configure $(STATIC) $(TCLDIR) $(TCLPARSER_OPTS) && \
+	  $(MAKE) all install
+
+LDFLAGS += build/lib/tclparser*/*tclparser*.a
+CFLAGS  += -DKIT_INCLUDES_TCLPARSER
+
+endif
+
 custom: $(CUSTOM)
