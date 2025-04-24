@@ -321,13 +321,21 @@ $(BUILD)\lib\tk$V$X.lib:
 	  core $(BUILD)\tk\wish.res install-libraries
 	$(COPY) $(BUILD)\tk\tk$V$X.lib $(BUILD)\lib
 
+# FIXME: expected for tcl86t.lib and tclstub86.lib located at 8.6\tcl\win\Release_AMD64_VC1928
+tkdyn: $(BUILD)\lib\tkdyn\tk.dll
+$(BUILD)\lib\tkdyn\tk.dll:
+	pushd ..\tk\win & $(MAKE) -f Makefile.vc INSTALLDIR=$(BUILD) \
+	  TCLDIR=$(BUILD)\..\..\tcl OPTS=none $(TK_MAKE_FLAGS) TCLINSTALL=0 \
+	  TMP_DIR=$(BUILD)\tkdyn OUT_DIR=$(BUILD)\tkdyn \
+	  core $(BUILD)\tkdyn\wish.res install-libraries
+
 vqtcl: $(BUILD)\lib\vqtcl4.1\vqtcl41$(X:t=).lib
 $(BUILD)\lib\vqtcl4.1\vqtcl41$(X:t=).lib:
 	pushd ..\..\8.x\vqtcl\win & $(MAKE) -f Makefile.vc \
 	  INSTALLDIR=$(BUILD) OPTS=$(OPTS) TMP_DIR=$(BUILD)\vqtcl \
 	  OUT_DIR=$(BUILD)\vqtcl all install
 
-threaddyn: $(BUILD)\lib\threaddyn\thread26.dll
+threaddyn: $(BUILD)\lib\threaddyn\thread28.dll
 $(BUILD)\lib\threaddyn\thread28.dll:
 	pushd ..\..\8.x\thread\win & $(MAKE) -f Makefile.vc \
 	  INSTALLDIR=$(BUILD) OPTS=none TMP_DIR=$(BUILD)\threaddyn \
