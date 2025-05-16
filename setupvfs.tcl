@@ -244,10 +244,11 @@ if {$encOpt} {
 
 switch -exact -- $threadOpt {
   static {
-    foreach file [glob -tails -dir build/lib/thread2.8.10 *.tcl] {
-      lappend clifiles lib/thread2.8.10/$file
+    set threadDir [lindex [lsort -dict [glob -type d -tails -dir build/lib thread2.8.*]] end]
+    foreach file [glob -tails -dir build/lib/$threadDir *.tcl] {
+      lappend clifiles lib/$threadDir/$file
     }
-    lappend clifiles lib/thread2.8.10/pkgIndex.tcl
+    lappend clifiles lib/$threadDir/pkgIndex.tcl
   }
   dynamic {
     lappend clifiles lib/[glob -tails -dir build/lib thread2*]

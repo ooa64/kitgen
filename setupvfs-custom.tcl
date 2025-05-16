@@ -1,5 +1,9 @@
-if {[file readable setupvfs-local.tcl]} {
-  source setupvfs-local.tcl
+
+set setupvfs_local [file join [file dirname [file normalize [info script]]] setupvfs-local.tcl]
+
+if {[file readable $setupvfs_local]} {
+  puts "Local vfs setup ..."
+  source $setupvfs_local
 }
 
 if {"tbcload" in $::env(CUSTOM)} {
