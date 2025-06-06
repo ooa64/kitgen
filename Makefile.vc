@@ -47,6 +47,10 @@ V=$(VERSION)
 SYMBOLS=0
 !endif
 
+!ifndef MEMDEBUG
+MEMDEBUG=0
+!endif
+
 !ifndef UPX
 !if ![upx -V > NUL]
 !message *** Enabling upx compression of executables
@@ -135,6 +139,10 @@ UPXCOMP = upx -q --ultra-brute --compress-resources=0 $@
 UPXCOMP = upx -q9 $@ >NUL
 !endif
 !endif
+!endif
+
+!if $(MEMDEBUG)
+OPTS = $(OPTS) STATS=memdbg
 !endif
 
 !if "$(CUSTOM)" != ""
@@ -341,8 +349,8 @@ $(BUILD)\lib\threaddyn\thread28.dll:
 	  INSTALLDIR=$(BUILD) OPTS=none TMP_DIR=$(BUILD)\threaddyn \
 	  OUT_DIR=$(BUILD)\threaddyn default-target default-install
 
-thread: $(BUILD)\lib\thread2.8.*\thread28*$X.lib
-$(BUILD)\lib\thread2.8.*\thread28*$X.lib:
+thread: $(BUILD)\lib\thread2.8.10\thread2810$X.lib
+$(BUILD)\lib\thread2.8.10\thread2810$X.lib:
 	pushd ..\..\8.x\thread\win & $(MAKE) -f Makefile.vc \
 	  INSTALLDIR=$(BUILD) OPTS=$(OPTS) TMP_DIR=$(BUILD)\thread \
 	  OUT_DIR=$(BUILD)\thread default-target default-install

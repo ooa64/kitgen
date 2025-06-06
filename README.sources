@@ -1,0 +1,19 @@
+8.x/tdom
+http://tdom.org/downloads/tdom-0.9.5-src.tar.gz
+http://tdom.org/downloads/tdom-0.9.5-src.zip
+
+8.x/tclcvs
+https://sourceforge.net/projects/tclcsv/files/tclcsv2.4.3-src.tar.gz/download
+https://sourceforge.net/projects/tclcsv/files/tclcsv2.4.3-src.zip/download
+https://github.com/apnadkarni/tcl-csv/archive/refs/tags/v2.4.3.tar.gz
+https://github.com/apnadkarni/tcl-csv/archive/refs/tags/v2.4.3.zip
+
+8.x/tcldbf
+https://github.com/ooa64/tcldbf2/archive/refs/tags/v-2-1-0.tar.gz
+https://github.com/ooa64/tcldbf2/archive/refs/tags/v-2-1-0.zip
+
+8.x/xlsreader
+git clone https://github.com/ooa64/tclxlsreader
+
+8.6/win32-ix64-csvview/ooxml.tcl 
+https://fossil.sowaswie.de/ooxml

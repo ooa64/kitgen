@@ -1,4 +1,17 @@
 
+ifneq (,$(findstring tdom,$(CUSTOM)))
+
+tdom: build/tdom
+build/tdom: build/tcl
+	mkdir -p $@ && cd $@ && CFLAGS="$(CFLAGS)" && export CFLAGS && \
+	  sh $(EXTDIR)/tdom/configure $(STATIC) $(TCLDIR) $(TDOM_OPTS) && \
+	  $(MAKE) install
+
+LDFLAGS += build/lib/tcltdom0*/*tdom*.a
+CFLAGS  += -DKIT_INCLUDES_TDOM
+
+endif
+
 ifneq (,$(findstring tls,$(CUSTOM)))
 
 tls: build/tls
@@ -60,6 +73,32 @@ build/tcldbf: build/tcl
 
 LDFLAGS += build/lib/tcldbf2*/*tcldbf2*.a -lstdc++
 CFLAGS  += -DKIT_INCLUDES_TCLDBF
+
+endif
+
+ifneq (,$(findstring tclcsv,$(CUSTOM)))
+
+tclcsv: build/tclcsv
+build/tclcsv: build/tcl
+	mkdir -p $@ && cd $@ && CFLAGS="$(CFLAGS)" && export CFLAGS && \
+	  sh $(EXTDIR)/tclcsv/configure $(STATIC) $(TCLDIR) $(TCLDBF_OPTS) && \
+	  $(MAKE) install
+
+LDFLAGS += build/lib/tclcsv2*/*tclcsv2*.a
+CFLAGS  += -DKIT_INCLUDES_TCLCSV
+
+endif
+
+ifneq (,$(findstring xlsreader,$(CUSTOM)))
+
+tclxlsreader: build/tclxlsreader
+build/tclxlsreader: build/tcl
+	mkdir -p $@ && cd $@ && CFLAGS="$(CFLAGS)" && export CFLAGS && \
+	  sh $(EXTDIR)/tclxlsreader/configure $(STATIC) $(TCLDIR) $(XLSREADER_OPTS) && \
+	  $(MAKE) install
+
+LDFLAGS += build/lib/xlsreader1*/*xlsreader1*.a
+CFLAGS  += -DKIT_INCLUDES_XLSREADER
 
 endif
 

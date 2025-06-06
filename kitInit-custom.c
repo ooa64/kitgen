@@ -3,6 +3,11 @@
     Tcl_StaticPackage(0, "Tbcload", Tbcload_Init, Tbcload_SafeInit);
 #endif
 
+#if defined(KIT_INCLUDES_TDOM)
+    Tcl_AppInitProc Tdom_Init, Tdom_SafeInit;
+    Tcl_StaticPackage(0, "tdom", Tdom_Init, Tdom_SafeInit);
+#endif
+
 #if defined(KIT_INCLUDES_TLS)
     Tcl_AppInitProc Tls_Init, Tls_SafeInit;
     Tcl_StaticPackage(0, "tls", Tls_Init, Tls_SafeInit);
@@ -18,9 +23,19 @@
     Tcl_StaticPackage(0, "tcltdjson", Tcltdjson_Init, NULL);
 #endif
 
+#if defined(KIT_INCLUDES_TCLCSV)
+    Tcl_AppInitProc Tclcsv_Init;
+    Tcl_StaticPackage(0, "Tclcsv", Tclcsv_Init, NULL);
+#endif
+
 #if defined(KIT_INCLUDES_TCLDBF)
     Tcl_AppInitProc Tcldbf_Init;
     Tcl_StaticPackage(0, "Tcldbf", Tcldbf_Init, NULL);
+#endif
+
+#if defined(KIT_INCLUDES_XLSREADER)
+    Tcl_AppInitProc Xlsreader_Init;
+    Tcl_StaticPackage(0, "Xlsreader", Xlsreader_Init, NULL);
 #endif
 
 #if defined(KIT_INCLUDES_TCLPARSER)
