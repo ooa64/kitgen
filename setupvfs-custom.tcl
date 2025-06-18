@@ -45,8 +45,8 @@ if {"tcldbf" in $::env(CUSTOM)} {
 }
 
 if {"xlsreader" in $::env(CUSTOM)} {
-  vfscreate lib/xlsreader1.0.1/pkgIndex.tcl \
-     "package ifneeded xlsreader 1.0.1 \"load {} Xlsreader\""
+  vfscreate lib/xlsreader1.0.4/pkgIndex.tcl \
+     "package ifneeded xlsreader 1.0.4 \"load {} Xlsreader\""
 }
 
 if {"parser" in $::env(CUSTOM)} {

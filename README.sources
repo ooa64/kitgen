@@ -12,8 +12,8 @@ https://github.com/apnadkarni/tcl-csv/archive/refs/tags/v2.4.3.zip
 https://github.com/ooa64/tcldbf2/archive/refs/tags/v-2-1-0.tar.gz
 https://github.com/ooa64/tcldbf2/archive/refs/tags/v-2-1-0.zip
 
-8.x/xlsreader
-git clone https://github.com/ooa64/tclxlsreader
+8.x/tclxlsreader
+https://github.com/ooa64/tclxlsreader
 
 8.6/win32-ix64-csvview/ooxml.tcl 
 https://fossil.sowaswie.de/ooxml

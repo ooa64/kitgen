@@ -137,15 +137,15 @@ CFLAGS=$(CFLAGS) -DKIT_INCLUDES_TCLDBF=1
 
 !if "$(CUSTOM:xlsreader=)" != "$(CUSTOM)"
 
-xlsreader: $(BUILD)\lib\xlsreader1.0.1\xlsreader101$X.lib
+xlsreader: $(BUILD)\lib\xlsreader1.0.4\xlsreader104$X.lib
 
-$(BUILD)\lib\xlsreader1.0.1\xlsreader101$X.lib:
+$(BUILD)\lib\xlsreader1.0.4\xlsreader104$X.lib:
 	-md $(BUILD)\xlsreader
 	pushd ..\..\8.x\tclxlsreader\win & $(MAKE) -f Makefile.vc \
 	  INSTALLDIR=$(BUILD) OPTS=$(OPTS) TMP_DIR=$(BUILD)\tclcsv \
 	  OUT_DIR=$(BUILD)\xlsreader default-target install
 
-LIBS = $(LIBS) $(BUILD)\xlsreader\xlsreader101$X.lib
+LIBS = $(LIBS) $(BUILD)\xlsreader\xlsreader104$X.lib
 CFLAGS=$(CFLAGS) -DKIT_INCLUDES_XLSREADER=1
 
 !endif
