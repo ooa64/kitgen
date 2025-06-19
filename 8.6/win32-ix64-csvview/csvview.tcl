@@ -1104,10 +1104,14 @@ proc fileEof:dbf {row} {
 }
 
 proc fileOpen:xls {filename args} {
-    package require xlsreader
+    package require xlsreader 1.0.4-
     global state option
 
-    set data [xlsreader read $filename]
+    set params {}
+    if {[dict getdef $args "-encoding" ""] ne ""} {
+        lappend params -encoding [dict get $args "-encoding"]
+    }
+    set data [xlsreader read $filename {*}$params]
     set sheet [dict getdef $args "-sheet" 1]
     if {![string is integer -strict $sheet] || $sheet <= 0 || $sheet > [llength $data]} {
         error "Invalid sheet $sheet, must be a number from 1 to [llength $data]"
@@ -1115,7 +1119,7 @@ proc fileOpen:xls {filename args} {
     set state(file:handle) [lindex $data $sheet-1]
     set state(file:rows) [llength $state(file:handle)]
     set state(file:info) [list "Sheets" [llength $data]]
-    set state(file:options) [list -sheet $sheet]
+    set state(file:options) [list -sheet $sheet -encoding [dict getdef $args "-encoding" ""]]
     set state(file:fields) {} ;# TODO: list of fields: {field anchor ?size?}
     unset data
 }

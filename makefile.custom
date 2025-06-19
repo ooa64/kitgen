@@ -7,7 +7,7 @@ build/tdom: build/tcl
 	  sh $(EXTDIR)/tdom/configure $(STATIC) $(TCLDIR) $(TDOM_OPTS) && \
 	  $(MAKE) install
 
-LDFLAGS += build/lib/tcltdom0*/*tdom*.a
+LDFLAGS += build/lib/tdom0*/*tdom*.a
 CFLAGS  += -DKIT_INCLUDES_TDOM
 
 endif
@@ -91,8 +91,8 @@ endif
 
 ifneq (,$(findstring xlsreader,$(CUSTOM)))
 
-tclxlsreader: build/tclxlsreader
-build/tclxlsreader: build/tcl
+xlsreader: build/xlsreader
+build/xlsreader: build/tcl
 	mkdir -p $@ && cd $@ && CFLAGS="$(CFLAGS)" && export CFLAGS && \
 	  sh $(EXTDIR)/tclxlsreader/configure $(STATIC) $(TCLDIR) $(XLSREADER_OPTS) && \
 	  $(MAKE) install
