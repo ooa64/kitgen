@@ -8,20 +8,20 @@ root=`dirname $1`
 base=`basename $1`
 shift
 
-case $root in .) root=8.4;; esac
+case $root in .) root=8.6;; esac
 path=$root/$base
 
 if test ! -d $root
   then echo "error: directory '$root' does not exist"; exit 1; fi
 
 for v in allenc allmsgs aqua b64 cli dyn gui ppc mk \
-          gcov gprof sym thread tzdata univ x86 cust
+          gcov gprof sym thread tzdata univ x86 arm cust
   do eval $v=0; done
 
 while test $# != 0
   do eval $1=1; shift; done
 
-#for v in thread allenc allmsgs tzdata cli dyn gui aqua x86 ppc univ
+#for v in thread allenc allmsgs tzdata cli dyn gui aqua x86 ppc arm univ cust
 #  do eval val=$`echo $v`; echo $v = "$val"; done
 
 make=$path/Makefile
@@ -40,7 +40,7 @@ case $cli-$dyn-$gui in 0-0-0) cli=1 dyn=1 gui=1 ;; esac
 
   case $mach in
 
-    Darwin)
+    LegacyDarwin)
       case $aqua in
         1) echo "GUI_OPTS   = -framework Carbon -framework IOKit" ;;
         *) echo "GUI_OPTS   = -L/usr/X11R6/lib -lX11 -weak-lXss -lXext" ;;
@@ -60,6 +60,34 @@ case $cli-$dyn-$gui in 0-0-0) cli=1 dyn=1 gui=1 ;; esac
       esac
       echo "CFLAGS    += -isysroot /Developer/SDKs/MacOSX10.4u.sdk" \
                           "-mmacosx-version-min=10.4"
+
+      case $aqua in 1)
+        echo "TK_OPTS    = --enable-aqua"
+        echo "TKDYN_OPTS = --enable-aqua" ;;
+      esac
+      ;;
+
+    Darwin)
+
+      echo "SO         = dylib"
+
+      case $aqua in
+        1) echo "GUI_OPTS   = -ObjC -framework Cocoa -framework Carbon -framework IOKit -framework QuartzCore -weak_framework UniformTypeIdentifiers" ;;
+        *) echo "GUI_OPTS   = -L/usr/X11R6/lib -lX11 -weak-lXss -lXext" ;;
+      esac
+
+      echo "LDFLAGS    = -framework CoreFoundation"
+      echo "LDFLAGS   += build/lib/*tclstub8*.a"
+      echo "LDSTRIP    = -x"
+
+      case $univ-$arm-$x86 in
+        0-0-0) ;;
+        0-1-0) echo "CFLAGS    += -arch arm64" ;;
+        0-0-1) echo "CFLAGS    += -arch x86_64" ;;
+        0-1-1) echo "CFLAGS    += -arch arm64 -arch x86_64" ;;
+        1-?-?) echo "CFLAGS    += -arch arm64 -arch x86_64" ;;
+      esac
+      echo "CFLAGS    += -mmacosx-version-min=11"
 
       case $aqua in 1)
         echo "TK_OPTS    = --enable-aqua"
