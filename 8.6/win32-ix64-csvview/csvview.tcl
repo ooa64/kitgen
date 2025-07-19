@@ -1266,4 +1266,10 @@ try {
 
 windowCreate .
 
-fileOpen $option(-filetype) $option(-filename) {*}[array get option]
+if {$argc == 0 && $tcl_platform(os) eq "Darwin"} {
+    proc ::tk::mac::OpenDocument {args} {
+        fileOpen "" [lindex $args 0] {*}[array get option]
+    }
+} else {
+    fileOpen $option(-filetype) $option(-filename) {*}[array get option]
+}
