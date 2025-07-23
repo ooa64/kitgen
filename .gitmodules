@@ -6,3 +6,7 @@
 	path = 8.6/tk
 	url = https://github.com/tcltk/tk.git
 	branch = core-8-6-branch
+[submodule "8.x/thread"]
+	path = 8.x/thread
+	url = https://github.com/tcltk/thread.git
+	branch = thread-2-8-branch
