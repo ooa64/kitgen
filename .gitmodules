@@ -1,0 +1,8 @@
+[submodule "8.6/tcl"]
+	path = 8.6/tcl
+	url = https://github.com/tcltk/tcl.git
+	branch = core-8-6-branch
+[submodule "8.6/tk"]
+	path = 8.6/tk
+	url = https://github.com/tcltk/tk.git
+	branch = core-8-6-branch
