@@ -10,3 +10,7 @@
 	path = 8.x/thread
 	url = https://github.com/tcltk/thread.git
 	branch = thread-2-8-branch
+[submodule "8.x/tclconfig"]
+	path = 8.x/tclconfig
+	url = https://github.com/tcltk/tclconfig.git
+	branch = main
