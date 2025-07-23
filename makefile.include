@@ -73,15 +73,15 @@ build/tcl:
 threaded: build/threaddyn
 build/threaddyn: build/tcl
 	mkdir -p $@ && cd $@ && CFLAGS="$(CFLAGS)" && export CFLAGS && \
+	  (test -e $(EXTDIR)/thread/tclconfig || ln -s ../tclconfig $(EXTDIR)/thread/tclconfig) && \
 	  sh $(EXTDIR)/thread/configure $(TCLDIR) $(THREADDYN_OPTS) && \
-	  (test -f $(EXTDIR)/thread/tclconfig || ln -s ../tclconfig $(EXTDIR)/thread/tclconfig) && \
 	  $(MAKE) install-binaries install-libraries
 
 thread: build/thread
 build/thread: build/tcl
 	mkdir -p $@ && cd $@ && CFLAGS="$(CFLAGS)" && export CFLAGS && \
+	  (test -e $(EXTDIR)/thread/tclconfig || ln -s ../tclconfig $(EXTDIR)/thread/tclconfig) && \
 	  sh $(EXTDIR)/thread/configure $(STATIC) $(TCLDIR) $(THREAD_OPTS) && \
-	  (test -f $(EXTDIR)/thread/tclconfig || ln -s ../tclconfig $(EXTDIR)/thread/tclconfig) && \
 	  $(MAKE) install-binaries install-libraries
 
 build/tk: build/tcl
