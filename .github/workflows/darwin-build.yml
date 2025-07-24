@@ -17,13 +17,9 @@ jobs:
       - name: Build
         run: make
         working-directory: 8.6/darwin-univ-generic
-      - name: Archive
-        run: |
-          cp tclkit-cli tclkit-cli-darwin
-          cp tclkit-gui tclkit-gui-darwin
-        working-directory: 8.6/darwin-univ-generic
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          path: 8.6/darwin-univ-generic/tclkit-*-darwin
+          name: tclkit-darwin
+          path: 8.6/darwin-univ-generic/tclkit-*
           overwrite: true

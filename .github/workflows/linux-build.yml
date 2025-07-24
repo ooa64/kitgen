@@ -1,6 +1,8 @@
 name: Linux
 on:
-  workflow_dispatch:
+  push:
+    branches:
+    - "using-submodules"
 jobs:
   make:
     runs-on: ubuntu-22.04
@@ -17,13 +19,9 @@ jobs:
       - name: Build
         run: make
         working-directory: 8.6/linux-ix86-generic
-      - name: Archive
-        run: |
-          cp tclkit-cli tclkit-cli-linux
-          cp tclkit-gui tclkit-gui-linux
-        working-directory: 8.6/linux-ix86-generic
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          path: 8.6/linux-ix86-generic/tclkit-*-linux
+          name: tclkit-linux
+          path: 8.6/linux-ix86-generic/tclkit-*
           overwrite: true
