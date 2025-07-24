@@ -10,10 +10,12 @@ jobs:
       run:
         shell: bash
     steps:
+      - name: Setup
+        run: sudo apt-get install libxss-dev libxft-dev
       - name: Checkout
         uses: actions/checkout@v4
       - name: Prepare
-        run: git submodule update --init --single-branch 
+        run: git submodule update --init --single-branch
       - name: Build
         run: make
         working-directory: 8.6/linux-ix86-generic
