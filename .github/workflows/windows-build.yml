@@ -1,8 +1,6 @@
 name: Windows
 on:
-  push:
-    branches:
-    - "using-submodules"
+  workflow_dispatch:
 jobs:
   make:
     runs-on: windows-2022
@@ -19,3 +17,13 @@ jobs:
       - name: Build
         run: nmake -nologo
         working-directory: 8.6\win32-ix86-generic
+      - name: Archive
+        run: |
+          copy tclkit-cli.exe tclkit-cli-windows.exe
+          copy tclkit-gui.exe tclkit-gui-windows.exe
+        working-directory: 8.6\win32-ix86-generic
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          path: 8.6\win32-ix86-generic\tclkit-*-windows.exe
+          overwrite: true

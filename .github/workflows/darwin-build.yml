@@ -1,29 +1,29 @@
-name: Linux
+name: Darwin
 on:
-  workflow_dispatch:
+  push:
+    branches:
+    - "using-submodules"
 jobs:
   make:
-    runs-on: ubuntu-22.04
+    runs-on: macos-15
     defaults:
       run:
         shell: bash
     steps:
-      - name: Setup
-        run: sudo apt-get install libxss-dev libxft-dev
       - name: Checkout
         uses: actions/checkout@v4
       - name: Prepare
         run: git submodule update --init --single-branch
       - name: Build
         run: make
-        working-directory: 8.6/linux-ix86-generic
+        working-directory: 8.6/darwin-univ-generic
       - name: Archive
         run: |
-          cp tclkit-cli tclkit-cli-linux
-          cp tclkit-gui tclkit-gui-linux
-        working-directory: 8.6/linux-ix86-generic
+          cp tclkit-cli tclkit-cli-darwin
+          cp tclkit-gui tclkit-gui-darwin
+        working-directory: 8.6/darwin-univ-generic
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          path: 8.6/linux-ix86-generic/tclkit-*-linux
+          path: 8.6/darwin-univ-generic/tclkit-*-darwin
           overwrite: true
