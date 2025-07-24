@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Prepare
+        run: git submodule update --init --single-branch 
       - name: Build
         run: make
         working-directory: 8.6/linux-ix86-generic
