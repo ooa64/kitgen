@@ -18,4 +18,4 @@ jobs:
         run: git submodule update --init --single-branch
       - name: Build
         run: nmake -nologo
-        working-directory: 8.6/win32-ix86-generic
+        working-directory: 8.6\win32-ix86-generic
