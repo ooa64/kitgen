@@ -1,0 +1,12 @@
+name: Linux
+on:
+  push:
+    branches:
+    - "using-submodules"
+jobs:
+  make:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: build
+        run: make
+        working-directory: 8.6/linux-ix86-generic
