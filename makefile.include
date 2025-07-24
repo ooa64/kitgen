@@ -23,6 +23,8 @@ SO    ?=.so
 
 ifdef CUSTOM
 include ../../makefile.custom
+else
+custom:
 endif
 
 tclkit-cli$(EXE): kit-cli$(EXE) ../../setupvfs.tcl build/files

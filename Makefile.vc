@@ -66,7 +66,7 @@ UPXLEVEL=1
 !endif
 
 !ifndef CUSTOM
-CUSTOM=""
+CUSTOM=
 !endif
 
 MAKE    = $(MAKE) -nologo
