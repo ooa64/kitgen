@@ -6,7 +6,12 @@ on:
 jobs:
   make:
     runs-on: ubuntu-22.04
+    defaults:
+      run:
+        shell: bash
     steps:
-      - name: build
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build
         run: make
         working-directory: 8.6/linux-ix86-generic
