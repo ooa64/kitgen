@@ -13,9 +13,12 @@
 # You can download from http://prdownloads.sourceforge.net/tcl/
 #
 # Finally change to this build directory and build it all using 
-#  nmake -nologo VERSION=85
 #
-# If you want to create a symbols/debug build then add SYMBOLS=1
+#  nmake -nologo
+#
+# You can specify the Tcl version by adding VERSION=84, 85 or 86
+# If you want to create a symbols/debug build then add SYMBOLS=1 (and MEMDEBUG=1 if needed)
+# If you want to create an uncompressed binary add UPX=0
 #
 # For example:
 #
@@ -36,11 +39,7 @@
 #
 
 !ifndef VERSION
-!message *** You must specify the Tcl version. Set VERSION=84, 85 or 86
-!message *** You may also specify SYMBOLS=0|1 and/or UPX=0|1
-!error
-!else
-V=$(VERSION)
+VERSION=86
 !endif
 
 !ifndef SYMBOLS
@@ -66,9 +65,10 @@ UPXLEVEL=1
 !endif
 
 !ifndef CUSTOM
-CUSTOM=""
+CUSTOM=
 !endif
 
+V       = $(VERSION)
 MAKE    = $(MAKE) -nologo
 CPY     = xcopy /i /y >NUL
 COPY    = copy /y >NUL
